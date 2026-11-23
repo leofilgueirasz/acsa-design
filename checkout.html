@@ -183,7 +183,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 18px; font-size: 14px;">Finalizar e Confirmar Pedido</button>
+                <button type="submit" id="btn-finalizar-compra" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 18px; font-size: 14px;">Finalizar e Confirmar Pedido</button>
             </form>
 
             <!-- Coluna Direita: Resumo Financeiro do Pedido -->
@@ -468,7 +468,7 @@
             }
         }
 
-        function concluirPedido(event) {
+        async function concluirPedido(event) {
             event.preventDefault();
             const cart = getCart();
             if (cart.length === 0) {
@@ -480,6 +480,12 @@
                 alert('Por favor, digite seu CEP e clique em "Calcular" para escolher uma transportadora.');
                 document.getElementById('checkout-cep').focus();
                 return;
+            }
+
+            const btnSubmit = document.getElementById('btn-finalizar-compra');
+            if (btnSubmit) {
+                btnSubmit.disabled = true;
+                btnSubmit.innerText = 'Processando Pedido...';
             }
 
             const nome = document.getElementById('cliente-nome').value.trim();
@@ -511,29 +517,49 @@
             const percComissao = parseFloat(optionVend?.dataset?.comissao) || 0;
             const valorComissao = (totalGeralCalculado * percComissao) / 100;
 
-            // 3. Registra o pedido no painel administrativo e no histórico do cliente
+            const resumoItens = cart.map(i => `${i.nome} (${i.detalhe})`).join(' + ');
+            const tagCupom = codigoCupomAplicado ? ` • Cupom: ${codigoCupomAplicado}` : '';
+
+            const novoPedido = {
+                id: 'SITE-' + Math.floor(1000 + Math.random() * 9000),
+                data: new Date().toLocaleDateString('pt-BR'),
+                status: 'Confirmado',
+                cliente: nome,
+                clienteEmail: emailCliente,
+                email: emailCliente,
+                telefone: telefone,
+                itemResumo: `${resumoItens} • ${msgEntrega}${tagCupom}`,
+                valorTotal: totalGeralCalculado,
+                pagamento: metodoPagamento.toUpperCase(),
+                vendedorEmail: vendedorEmail,
+                vendedorNome: vendedorNome,
+                percComissao: percComissao,
+                valorComissao: valorComissao
+            };
+
             if (typeof salvarPedidoSistema === 'function') {
-                const resumoItens = cart.map(i => `${i.nome} (${i.detalhe})`).join(' + ');
-                const tagCupom = codigoCupomAplicado ? ` • Cupom: ${codigoCupomAplicado}` : '';
-                salvarPedidoSistema({
-                    id: 'SITE-' + Math.floor(1000 + Math.random() * 9000),
-                    data: new Date().toLocaleDateString('pt-BR'),
-                    cliente: nome,
-                    clienteEmail: emailCliente,
-                    telefone: telefone,
-                    itemResumo: `${resumoItens} • ${msgEntrega}${tagCupom}`,
-                    valorTotal: totalGeralCalculado,
-                    pagamento: metodoPagamento.toUpperCase(),
-                    vendedorEmail: vendedorEmail,
-                    vendedorNome: vendedorNome,
-                    percComissao: percComissao,
-                    valorComissao: valorComissao
-                });
+                salvarPedidoSistema(novoPedido);
             }
 
-            alert(`Pedido confirmado para ${nome}!\nModalidade: ${msgEntrega}\nPagamento: ${metodoPagamento.toUpperCase()}\n\nO estoque já foi atualizado e seu pedido foi registrado!`);
+            // 3. Dispara e-mail automático de confirmação (quando RESEND_API_KEY estiver ativa)
+            try {
+                await fetch('/api/notificar-pedido', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pedido: novoPedido, tipoEvento: 'criacao' })
+                });
+            } catch (e) {}
+
             localStorage.removeItem('acsaCart');
-            window.location.href = 'index.html';
+
+            const userLogado = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
+            alert(`Pedido ${novoPedido.id} confirmado para ${nome}!\n\nEnviamos os detalhes para ${emailCliente}. Você já pode acompanhar o status e avaliar sua compra na área Minha Conta.`);
+
+            if (userLogado && (userLogado.perfil === 'cliente' || userLogado.perfil === 'parceiro')) {
+                window.location.href = 'minha-conta.html';
+            } else {
+                window.location.href = 'index.html';
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {

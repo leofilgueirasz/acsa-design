@@ -5,6 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Conta | Acsa Design</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .order-tracker {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 14px 0 16px 0;
+            padding: 12px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+        }
+        .tracker-step {
+            text-align: center;
+            font-size: 11px;
+            color: #999;
+            position: relative;
+        }
+        .tracker-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #e5e5e5;
+            color: #777;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 6px auto;
+        }
+        .tracker-step.done .tracker-dot {
+            background: var(--accent-gold);
+            color: #1a1816;
+        }
+        .tracker-step.done {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        .review-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(18, 16, 14, 0.55);
+            z-index: 1100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .review-modal-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border-gray);
+            max-width: 480px;
+            width: 100%;
+            padding: 32px;
+            position: relative;
+        }
+        @media (max-width: 650px) {
+            .order-tracker { grid-template-columns: 1fr 1fr; gap: 12px; }
+        }
+    </style>
 </head>
 <body>
 
@@ -71,12 +131,42 @@
         <div class="checkout-step-box">
             <span class="subtitle">HISTÓRICO DE COMPRAS</span>
             <h2 style="margin-bottom: 6px;">Meus Pedidos (<span id="conta-total-pedidos">0</span>)</h2>
-            <p style="font-size: 13px; color: #777; margin-bottom: 20px;">Acompanhe os pedidos realizados com seu cadastro ou e-mail na Acsa Design.</p>
+            <p style="font-size: 13px; color: #777; margin-bottom: 20px;">Acompanhe em tempo real cada etapa dos seus pedidos realizados com seu cadastro ou e-mail na Acsa Design.</p>
 
-            <div id="lista-meus-pedidos" style="display: flex; flex-direction: column; gap: 14px;"></div>
+            <div id="lista-meus-pedidos" style="display: flex; flex-direction: column; gap: 16px;"></div>
         </div>
 
     </main>
+
+    <!-- Modal de Avaliação Pós-Compra (1 a 5 Estrelas) -->
+    <div id="modal-avaliar-pedido" class="review-modal-backdrop">
+        <div class="review-modal-card">
+            <button type="button" onclick="fecharModalAvaliacao()" style="position: absolute; top: 14px; right: 18px; background: none; border: none; font-size: 24px; cursor: pointer; color: #777;">&times;</button>
+            <span class="subtitle">SUA OPINIÃO IMPORTA</span>
+            <h2 style="font-size: 24px; margin-bottom: 6px;">Avaliar Experiência</h2>
+            <p id="modal-rev-subtitulo" style="font-size: 12px; color: #777; margin-bottom: 16px;"></p>
+
+            <form onsubmit="salvarAvaliacaoDoCliente(event)">
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label>Nota Geral (1 a 5 estrelas) *</label>
+                    <div class="star-picker" id="conta-star-picker">
+                        <button type="button" class="star-pick-btn active" data-val="1" onclick="selecionarEstrelaConta(1)">&#9733;</button>
+                        <button type="button" class="star-pick-btn active" data-val="2" onclick="selecionarEstrelaConta(2)">&#9733;</button>
+                        <button type="button" class="star-pick-btn active" data-val="3" onclick="selecionarEstrelaConta(3)">&#9733;</button>
+                        <button type="button" class="star-pick-btn active" data-val="4" onclick="selecionarEstrelaConta(4)">&#9733;</button>
+                        <button type="button" class="star-pick-btn active" data-val="5" onclick="selecionarEstrelaConta(5)">&#9733;</button>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="conta-rev-comentario">Conte como foi sua compra na Acsa Design *</label>
+                    <textarea id="conta-rev-comentario" rows="4" required placeholder="Fale sobre a qualidade do produto, atendimento e prazo de entrega..." style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit; font-size: 13px;"></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer;">Enviar Avaliação Pública</button>
+            </form>
+        </div>
+    </div>
 
     <footer class="footer">
         <div class="container footer-content">
@@ -125,10 +215,93 @@
             window.location.href = 'vendedor.html';
         }
 
+        let pedidoSendoAvaliado = null;
+        let notaContaSelecionada = 5;
+
         function copiarCupomParceiro() {
             navigator.clipboard.writeText('ACSAPRO10').then(() => {
                 alert('Cupom ACSAPRO10 copiado! Cole no campo de cupom ao finalizar sua compra.');
             });
+        }
+
+        function gerarBarraEtapasHTML(status) {
+            if (status === 'Cancelado') {
+                return `<div style="padding: 10px 12px; background: #fdf2f2; border: 1px solid #e5b7b7; color: #b54b4b; font-size: 12px; font-weight: 600; margin: 12px 0;">Pedido Cancelado</div>`;
+            }
+
+            let nivel = 1;
+            if (status === 'Em Separação') nivel = 2;
+            else if (status === 'Enviado / Pronto p/ Retirada') nivel = 3;
+            else if (status === 'Concluído') nivel = 4;
+
+            const etapas = [
+                { num: 1, label: 'Confirmado' },
+                { num: 2, label: 'Em Separação' },
+                { num: 3, label: 'Enviado / Retirada' },
+                { num: 4, label: 'Concluído' }
+            ];
+
+            return `
+                <div class="order-tracker">
+                    ${etapas.map(e => `
+                        <div class="tracker-step ${nivel >= e.num ? 'done' : ''}">
+                            <div class="tracker-dot">${nivel >= e.num ? '&#10003;' : e.num}</div>
+                            <span>${e.label}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function abrirModalAvaliacao(pedidoId, resumoItem) {
+            pedidoSendoAvaliado = { id: pedidoId, resumo: resumoItem };
+            document.getElementById('modal-rev-subtitulo').innerText = `Pedido ${pedidoId} • ${resumoItem.split('•')[0].trim()}`;
+            selecionarEstrelaConta(5);
+            document.getElementById('conta-rev-comentario').value = '';
+            document.getElementById('modal-avaliar-pedido').style.display = 'flex';
+        }
+
+        function fecharModalAvaliacao() {
+            document.getElementById('modal-avaliar-pedido').style.display = 'none';
+        }
+
+        function selecionarEstrelaConta(nota) {
+            notaContaSelecionada = nota;
+            document.querySelectorAll('#conta-star-picker .star-pick-btn').forEach(btn => {
+                btn.classList.toggle('active', Number(btn.dataset.val) <= nota);
+            });
+        }
+
+        function salvarAvaliacaoDoCliente(event) {
+            event.preventDefault();
+            if (!pedidoSendoAvaliado || !userConta) return;
+
+            const comentario = document.getElementById('conta-rev-comentario').value.trim();
+            if (!comentario) return;
+
+            const avaliacoes = JSON.parse(localStorage.getItem('acsaAvaliacoesLoja')) || [];
+            avaliacoes.unshift({
+                id: 'rev-' + Date.now(),
+                autor: userConta.nome.split('(')[0].trim(),
+                nota: notaContaSelecionada,
+                data: new Date().toLocaleDateString('pt-BR'),
+                produto: pedidoSendoAvaliado.resumo.split('•')[0].trim(),
+                comentario: comentario,
+                verificada: true
+            });
+            localStorage.setItem('acsaAvaliacoesLoja', JSON.stringify(avaliacoes));
+
+            // Marca o pedido como já avaliado
+            const pedidos = getPedidosRegistrados();
+            const idx = pedidos.findIndex(p => p.id === pedidoSendoAvaliado.id);
+            if (idx !== -1) {
+                pedidos[idx].avaliado = true;
+                localStorage.setItem('acsaPedidos', JSON.stringify(pedidos));
+            }
+
+            fecharModalAvaliacao();
+            carregarPainelConta();
+            alert('Avaliação publicada com sucesso! Ela já aparece na página dos produtos para ajudar novos clientes.');
         }
 
         function carregarPainelConta() {
@@ -165,19 +338,33 @@
                 return;
             }
 
-            container.innerHTML = meusPedidos.map(p => `
-                <div style="background: var(--bg-soft); padding: 16px; border: 1px solid var(--border-gray); font-size: 13px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <strong>Pedido ${p.id}</strong>
-                        <span style="font-size: 12px; color: #777;">Data: ${p.data} &bull; <strong style="color: var(--accent-gold);">${p.status || 'Confirmado'}</strong>
+            container.innerHTML = meusPedidos.map(p => {
+                const statusAtual = p.status || 'Confirmado';
+                const podeAvaliar = statusAtual !== 'Cancelado' && !p.avaliado;
+                const resumoEscapado = (p.itemResumo || '').replace(/'/g, "\\'");
+
+                return `
+                    <div style="background: var(--bg-soft); padding: 18px; border: 1px solid var(--border-gray); font-size: 13px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+                            <strong>Pedido ${p.id}</strong>
+                            <span style="font-size: 12px; color: #777;">Data: ${p.data} &bull; Status: <strong style="color: var(--accent-gold);">${statusAtual}</strong></span>
+                        </div>
+                        <p style="color: #555; margin-bottom: 6px;">${p.itemResumo}</p>
+
+                        ${gerarBarraEtapasHTML(statusAtual)}
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding-top: 10px; border-top: 1px solid var(--border-gray); font-size: 12px;">
+                            <div>
+                                <span>Pagamento: <strong>${p.pagamento}</strong></span> &bull;
+                                <span>Total: <strong>R$ ${Number(p.valorTotal).toFixed(2).replace('.', ',')}</strong></span>
+                            </div>
+                            ${podeAvaliar
+                                ? `<button type="button" class="btn-outline" style="padding: 6px 14px; font-size: 11px; border-color: var(--accent-gold);" onclick="abrirModalAvaliacao('${p.id}', '${resumoEscapado}')">&#9733; Avaliar Compra</button>`
+                                : (p.avaliado ? `<span style="color: #2e7d32; font-weight: 600;">&#10003; Avaliação enviada</span>` : '')}
+                        </div>
                     </div>
-                    <p style="color: #555; margin-bottom: 8px;">${p.itemResumo}</p>
-                    <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--border-gray); font-size: 12px;">
-                        <span>Pagamento: <strong>${p.pagamento}</strong></span>
-                        <span>Valor Total: <strong>R$ ${Number(p.valorTotal).toFixed(2).replace('.', ',')}</strong></span>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         document.addEventListener('DOMContentLoaded', carregarPainelConta);

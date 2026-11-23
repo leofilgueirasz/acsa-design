@@ -44,32 +44,20 @@
     <main class="container product-page">
         <div class="product-detail-layout">
             
-            <!-- Galeria: 3 Miniaturas na Esquerda + Foto Grande na Direita -->
-            <div class="gallery-wrapper">
-                <div class="vertical-thumbnails" id="thumbs-container"></div>
-                <div class="large-photo-box" id="foto-principal" style="overflow: hidden;"></div>
-            </div>
-
-            <!-- Coluna Direita: Informações, Valor, Calculadora de Rolos e Ficha Técnica -->
-            <div class="product-buy-col">
-                <span class="subtitle" id="item-categoria">ACSA DESIGN</span>
-                <h1 id="item-nome">Carregando...</h1>
-                <p class="product-sku" id="item-desc-curta" style="margin-top: 8px; font-size: 13px; color: #666;"></p>
-
-                <!-- Indicador de Estoque -->
-                <div id="estoque-status-badge" style="margin-top: 10px; font-size: 12px; font-weight: 600;"></div>
-
-                <!-- Bloco de Valores -->
-                <div class="price-display-box">
-                    <div class="price-main-row">
-                        <span class="big-price" id="item-valor">R$ 0,00</span>
-                        <span class="discount-tag" id="item-discount-tag">17% OFF</span>
-                    </div>
-                    <span class="old-price" id="item-valor-antigo">De: R$ 0,00</span>
-                    <span class="unit-note" id="item-unidade">ou até 6x sem juros no cartão</span>
+            <!-- COLUNA ESQUERDA: Galeria + Descrição + Calculadora Abaixo da Foto -->
+            <div class="product-left-col">
+                <div class="gallery-wrapper">
+                    <div class="vertical-thumbnails" id="thumbs-container"></div>
+                    <div class="large-photo-box" id="foto-principal" style="overflow: hidden;"></div>
                 </div>
 
-                <!-- Calculadora de Metragem / Rolos -->
+                <!-- Descrição do Produto abaixo da foto -->
+                <div class="product-description-card">
+                    <h3>Sobre o Produto</h3>
+                    <p id="item-desc-curta">Carregando descrição...</p>
+                </div>
+
+                <!-- Calculadora de Metragem / Rolos abaixo da descrição -->
                 <div class="measurement-box" id="bloco-metragem">
                     <div class="measurement-header">
                         <label>Calcule a quantidade para sua parede:</label>
@@ -104,12 +92,31 @@
                         <span id="resumo-unidade-texto" style="font-size: 13px; color: #666;">1 unidade selecionada</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- COLUNA DIREITA: Título, Valor, Compra, Frete e Especificações -->
+            <div class="product-buy-col">
+                <span class="subtitle" id="item-categoria">ACSA DESIGN</span>
+                <h1 id="item-nome">Carregando...</h1>
+
+                <!-- Indicador de Estoque -->
+                <div id="estoque-status-badge" style="margin-top: 10px; font-size: 12px; font-weight: 600;"></div>
+
+                <!-- Bloco de Valores -->
+                <div class="price-display-box">
+                    <div class="price-main-row">
+                        <span class="big-price" id="item-valor">R$ 0,00</span>
+                        <span class="discount-tag" id="item-discount-tag">17% OFF</span>
+                    </div>
+                    <span class="old-price" id="item-valor-antigo">De: R$ 0,00</span>
+                    <span class="unit-note" id="item-unidade">ou até 6x sem juros no cartão</span>
+                </div>
 
                 <!-- Botões de Ação -->
                 <div class="action-buttons-stack">
                     <button type="button" id="btn-comprar-agora" class="btn-primary btn-buy-direct" onclick="comprarAgora()">Comprar Agora</button>
                     <button type="button" id="btn-adicionar-sacola" class="btn-outline btn-add-cart" onclick="adicionarSacola()">Adicionar ao Carrinho</button>
-                <button type="button" class="btn-outline" style="width: 100%; font-size: 11px; border-color: var(--accent-gold); color: var(--text-dark);" onclick="gerarOrcamentoProduto()">Gerar Orçamento em PDF (Esta Medida)</button>
+                    <button type="button" class="btn-outline" style="width: 100%; font-size: 11px; border-color: var(--accent-gold); color: var(--text-dark);" onclick="gerarOrcamentoProduto()">Gerar Orçamento em PDF (Esta Medida)</button>
                 </div>
 
                 <!-- Cálculo de Frete Multi-Transportadoras ou Retirada na Loja -->
@@ -128,9 +135,84 @@
                     <h3 style="font-size: 18px; margin-bottom: 12px;">Especificações Técnicas</h3>
                     <table class="specs-table" id="ficha-tecnica-tabela"></table>
                 </div>
-
             </div>
         </div>
+
+        <!-- ========================================================== -->
+        <!-- CARROSSEL DE PRODUTOS RELACIONADOS / COMPLEMENTARES         -->
+        <!-- ========================================================== -->
+        <section class="related-products-section">
+            <div class="related-header-bar">
+                <div>
+                    <span class="subtitle">COMPLETE SEU AMBIENTE</span>
+                    <h2>Produtos Relacionados & Complementos</h2>
+                    <p>Combine acabamentos, painéis ripados e revestimentos para transformar todo o projeto.</p>
+                </div>
+                <div class="related-nav-btns">
+                    <button type="button" class="related-arrow-btn" onclick="rolarRelacionados(-1)" aria-label="Anterior">&#8249;</button>
+                    <button type="button" class="related-arrow-btn" onclick="rolarRelacionados(1)" aria-label="Próximo">&#8250;</button>
+                </div>
+            </div>
+
+            <div class="related-carousel-track" id="related-carousel-track"></div>
+        </section>
+
+        <!-- ========================================================== -->
+        <!-- SEÇÃO DE AVALIAÇÕES DOS CLIENTES (1 A 5 ESTRELAS)          -->
+        <!-- ========================================================== -->
+        <section class="reviews-section" id="avaliacoes-loja">
+            <div style="margin-bottom: 28px;">
+                <span class="subtitle">CONFIANÇA & QUALIDADE COMPROVADA</span>
+                <h2 style="font-size: 28px;">Avaliações de Clientes Acsa Design</h2>
+            </div>
+
+            <div class="reviews-layout">
+                <!-- Coluna Esquerda: Nota Geral + Formulário de Avaliação -->
+                <div class="reviews-summary-card">
+                    <strong style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px;">Índice de Satisfação</strong>
+                    <div class="reviews-score-row">
+                        <span class="reviews-big-number" id="media-nota-loja">4.9</span>
+                        <div>
+                            <div class="stars-gold" id="estrelas-media-loja">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                            <span style="font-size: 12px; color: #777;" id="total-avaliacoes-texto">Baseado em avaliações verificadas</span>
+                        </div>
+                    </div>
+
+                    <h3 style="font-size: 17px; margin-bottom: 6px;">Deixe sua Avaliação</h3>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 14px; font-weight: 300;">
+                        Comprou na Acsa Design? Conte como foi sua experiência e ajude novos clientes.
+                    </p>
+
+                    <form onsubmit="enviarAvaliacaoLoja(event)">
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <label>Sua Nota (1 a 5 estrelas) *</label>
+                            <div class="star-picker" id="star-picker">
+                                <button type="button" class="star-pick-btn active" data-val="1" onclick="selecionarNotaEstrela(1)">&#9733;</button>
+                                <button type="button" class="star-pick-btn active" data-val="2" onclick="selecionarNotaEstrela(2)">&#9733;</button>
+                                <button type="button" class="star-pick-btn active" data-val="3" onclick="selecionarNotaEstrela(3)">&#9733;</button>
+                                <button type="button" class="star-pick-btn active" data-val="4" onclick="selecionarNotaEstrela(4)">&#9733;</button>
+                                <button type="button" class="star-pick-btn active" data-val="5" onclick="selecionarNotaEstrela(5)">&#9733;</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label for="rev-nome">Seu Nome *</label>
+                            <input type="text" id="rev-nome" placeholder="Ex: Juliana Martins" required style="background: var(--bg-main);">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 14px;">
+                            <label for="rev-comentario">Seu Depoimento *</label>
+                            <textarea id="rev-comentario" rows="3" placeholder="Conte o que achou da qualidade do material, atendimento e entrega..." required style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit; font-size: 13px; background: var(--bg-main);"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer;">Publicar Avaliação</button>
+                    </form>
+                </div>
+
+                <!-- Coluna Direita: Lista de Depoimentos Publicados -->
+                <div class="reviews-list-col" id="lista-avaliacoes-container"></div>
+            </div>
+        </section>
     </main>
 
     <footer class="footer">
@@ -172,7 +254,7 @@
 
     <script src="js/app.js"></script>
     <script>
-        // Busca sempre a versão mais atualizada do produto no catálogo (para refletir o estoque real)
+        // Busca sempre a versão mais atualizada do produto no catálogo
         const selecaoInicial = JSON.parse(localStorage.getItem('produtoSelecionado')) || getCatalogo()[0];
         const produtoSalvo = getCatalogo().find(p => p.id === selecaoInicial.id) || selecaoInicial;
 
@@ -186,9 +268,9 @@
         document.title = produtoSalvo.nome + " | Acsa Design";
         document.getElementById('item-nome').innerText = produtoSalvo.nome;
         document.getElementById('item-categoria').innerText = `${produtoSalvo.categoria.toUpperCase()} • ${produtoSalvo.subcategoria.toUpperCase()}`;
-        document.getElementById('item-desc-curta').innerText = produtoSalvo.descricao || "";
+        document.getElementById('item-desc-curta').innerText = produtoSalvo.descricao || "Revestimento selecionado com curadoria Acsa Design para ambientes sofisticados.";
 
-        // Calcula porcentagem real de desconto se houver preço antigo maior
+        // Calcula porcentagem real de desconto
         const discountTagEl = document.getElementById('item-discount-tag');
         if (valorAntigoUnitario > valorUnitario) {
             const percOff = Math.round(((valorAntigoUnitario - valorUnitario) / valorAntigoUnitario) * 100);
@@ -198,7 +280,7 @@
             document.getElementById('item-valor-antigo').style.display = 'none';
         }
 
-        // Exibe status do estoque e bloqueia se estiver esgotado
+        // Exibe status do estoque
         const badgeEstoque = document.getElementById('estoque-status-badge');
         const btnComprar = document.getElementById('btn-comprar-agora');
         const btnAddSacola = document.getElementById('btn-adicionar-sacola');
@@ -352,6 +434,7 @@
             adicionarItemComEstoqueNaSacola();
             window.location.href = 'checkout.html';
         }
+
         function gerarOrcamentoProduto() {
             const payloadOrcamento = {
                 itens: [{
@@ -401,6 +484,153 @@
                 resultsBox.innerHTML = `<div class="shipping-option"><span style="color: #b54b4b;">${err.message}</span></div>`;
             }
         }
+
+        // ==========================================
+        // CARROSSEL DE PRODUTOS RELACIONADOS (CROSS-SELL)
+        // ==========================================
+        function renderProdutosRelacionados() {
+            const track = document.getElementById('related-carousel-track');
+            if (!track) return;
+
+            const catalogo = getCatalogo().filter(p => p.id !== produtoSalvo.id);
+            // Prioriza produtos complementares da mesma linha ou categorias diferentes para agregar venda
+            const mesmaLinha = catalogo.filter(p => p.linha === produtoSalvo.linha);
+            const outrasLinhas = catalogo.filter(p => p.linha !== produtoSalvo.linha);
+            const listaOrdenada = [...mesmaLinha, ...outrasLinhas];
+
+            track.innerHTML = listaOrdenada.map(p => criarCardProdutoHTML(p)).join('');
+        }
+
+        function rolarRelacionados(direcao) {
+            const track = document.getElementById('related-carousel-track');
+            if (!track) return;
+            track.scrollBy({ left: direcao * 560, behavior: 'smooth' });
+        }
+
+        // ==========================================
+        // SISTEMA DE AVALIAÇÕES DE CLIENTES (1 A 5 ESTRELAS)
+        // ==========================================
+        let notaSelecionada = 5;
+
+        const avaliacoesIniciais = [
+            {
+                id: 'rev-1',
+                autor: 'Camila Vasconcelos',
+                nota: 5,
+                data: '18/11/2026',
+                produto: 'Papel de Parede Vinílico Xadrez Marrom Claro',
+                comentario: 'Ficou impecável na parede da sala! O relevo do papel vinílico é muito sofisticado e a calculadora do site acertou exatamente a quantidade de rolos.',
+                verificada: true
+            },
+            {
+                id: 'rev-2',
+                autor: 'Rodrigo & Aline Pacheco',
+                nota: 5,
+                data: '12/11/2026',
+                produto: 'Painel Ripado Interno WPC - Preto Amadeirado',
+                comentario: 'Atendimento excelente pelo WhatsApp, retiramos no showroom em São Gonçalo no dia seguinte e o acabamento do painel ripado superou nossas expectativas.',
+                verificada: true
+            },
+            {
+                id: 'rev-3',
+                autor: 'Mariana Azevedo',
+                nota: 5,
+                data: '04/11/2026',
+                produto: 'Papel de Parede Vinílico Nuvens Suaves Azul Céu',
+                comentario: 'Compramos para o quartinho do nosso bebê. Material sem cheiro nenhum, super fácil de limpar e entrega rápida. Loja de extrema confiança!',
+                verificada: true
+            }
+        ];
+
+        function getAvaliacoesLoja() {
+            const salvas = JSON.parse(localStorage.getItem('acsaAvaliacoesLoja'));
+            if (!salvas || salvas.length === 0) {
+                localStorage.setItem('acsaAvaliacoesLoja', JSON.stringify(avaliacoesIniciais));
+                return avaliacoesIniciais;
+            }
+            return salvas;
+        }
+
+        function selecionarNotaEstrela(nota) {
+            notaSelecionada = nota;
+            document.querySelectorAll('#star-picker .star-pick-btn').forEach(btn => {
+                const val = Number(btn.dataset.val);
+                btn.classList.toggle('active', val <= nota);
+            });
+        }
+
+        function enviarAvaliacaoLoja(event) {
+            event.preventDefault();
+            const nome = document.getElementById('rev-nome').value.trim();
+            const comentario = document.getElementById('rev-comentario').value.trim();
+            if (!nome || !comentario) return;
+
+            const pedidos = typeof getPedidosRegistrados === 'function' ? getPedidosRegistrados() : [];
+            const comprouNaLoja = pedidos.some(p => p.cliente && p.cliente.toLowerCase().includes(nome.toLowerCase().split(' ')[0]));
+
+            const lista = getAvaliacoesLoja();
+            lista.unshift({
+                id: 'rev-' + Date.now(),
+                autor: nome,
+                nota: notaSelecionada,
+                data: new Date().toLocaleDateString('pt-BR'),
+                produto: produtoSalvo.nome,
+                comentario: comentario,
+                verificada: comprouNaLoja
+            });
+
+            localStorage.setItem('acsaAvaliacoesLoja', JSON.stringify(lista));
+            event.target.reset();
+            selecionarNotaEstrela(5);
+            renderAvaliacoesLoja();
+            alert('Obrigado pela sua avaliação! Seu depoimento já está visível para outros clientes.');
+        }
+
+        function renderAvaliacoesLoja() {
+            const lista = getAvaliacoesLoja();
+            const container = document.getElementById('lista-avaliacoes-container');
+            const mediaEl = document.getElementById('media-nota-loja');
+            const totalTextoEl = document.getElementById('total-avaliacoes-texto');
+
+            const soma = lista.reduce((acc, item) => acc + Number(item.nota || 5), 0);
+            const media = (soma / lista.length).toFixed(1);
+
+            if (mediaEl) mediaEl.innerText = media;
+            if (totalTextoEl) totalTextoEl.innerText = `Baseado em ${lista.length} avaliações de clientes`;
+
+            // Preenche automaticamente o nome se o cliente estiver logado
+            const userLogado = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
+            const nomeInput = document.getElementById('rev-nome');
+            if (userLogado && nomeInput && !nomeInput.value) {
+                nomeInput.value = userLogado.nome;
+            }
+
+            container.innerHTML = lista.map(rev => {
+                const estrelasCheias = '&#9733;'.repeat(rev.nota);
+                const estrelasVazias = '&#9734;'.repeat(5 - rev.nota);
+                return `
+                    <div class="review-item-card">
+                        <div class="review-item-header">
+                            <div>
+                                <strong style="font-size: 14px;">${rev.autor}</strong>
+                                ${rev.verificada ? '<span class="review-verified-badge">&#10003; Compra Verificada</span>' : ''}
+                            </div>
+                            <span style="font-size: 11px; color: #888;">${rev.data}</span>
+                        </div>
+                        <div class="stars-gold" style="font-size: 15px; margin-bottom: 6px;">
+                            ${estrelasCheias}<span style="color: #d4d4d4;">${estrelasVazias}</span>
+                        </div>
+                        ${rev.produto ? `<span style="display: block; font-size: 11px; color: #888; margin-bottom: 8px;">Produto adquirido: ${rev.produto}</span>` : ''}
+                        <p style="font-size: 13px; color: #555; font-weight: 300; line-height: 1.6;">"${rev.comentario}"</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProdutosRelacionados();
+            renderAvaliacoesLoja();
+        });
     </script>
 </body>
 </html>

@@ -277,6 +277,11 @@
                         </div>
                     </div>
 
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label>E-mail do Cliente (para notificações de status)</label>
+                        <input type="email" id="ped-email-cliente" placeholder="cliente@email.com">
+                    </div>
+
                     <!-- Modalidade de Entrega ou Retirada na Loja -->
                     <div style="background: var(--bg-soft); padding: 14px; border: 1px solid var(--border-gray); margin-bottom: 14px;">
                         <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 8px;">Modalidade de Recebimento *</label>
@@ -351,7 +356,7 @@
                 <!-- Histórico e Gestão de Status dos Pedidos -->
                 <aside class="checkout-summary-box">
                     <h3>Pedidos Registrados (<span id="total-pedidos-count">0</span>)</h3>
-                    <p style="font-size: 12px; color: #777; margin-bottom: 12px;">Altere o andamento de cada pedido ou cancele com estorno automático de estoque.</p>
+                    <p style="font-size: 12px; color: #777; margin-bottom: 12px;">Altere o andamento de cada pedido (notifica o cliente por e-mail) ou cancele com estorno de estoque.</p>
 
                     <!-- Resumo Financeiro dos Pedidos Ativos -->
                     <div style="display: flex; justify-content: space-between; background: var(--bg-main); border: 1px solid var(--border-gray); padding: 10px 12px; margin-bottom: 14px; font-size: 12px;">
@@ -720,6 +725,20 @@
             `;
         }
 
+        function dispararNotificacaoEmailPedido(pedidoObj, tipoEvento) {
+            const emailDestino = pedidoObj.clienteEmail || pedidoObj.email;
+            if (!emailDestino) return;
+
+            fetch('/api/notificar-pedido', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    pedido: { ...pedidoObj, email: emailDestino },
+                    tipoEvento: tipoEvento
+                })
+            }).catch(() => {});
+        }
+
         function salvarNovoPedidoADM(event) {
             event.preventDefault();
             if (!isAdmin) return;
@@ -729,6 +748,7 @@
             const nomeProduto = selectProd.options[selectProd.selectedIndex]?.text || "Item Avulso";
             const qtd = parseInt(document.getElementById('ped-qtd').value) || 1;
             const valorTotal = parseFloat(document.getElementById('ped-valor-total').value) || 0;
+            const emailCliente = document.getElementById('ped-email-cliente').value.trim();
 
             const tipoEntrega = document.querySelector('input[name="adm_tipo_entrega"]:checked').value;
             let infoLogistica = '';
@@ -755,6 +775,8 @@
                 produtoId: produtoIdSelecionado,
                 qtdPecas: qtd,
                 cliente: document.getElementById('ped-cliente').value.trim(),
+                clienteEmail: emailCliente,
+                email: emailCliente,
                 telefone: document.getElementById('ped-telefone').value.trim(),
                 itemResumo: `${qtd}x ${nomeProduto} • ${infoLogistica}`,
                 valorTotal: valorTotal,
@@ -774,6 +796,8 @@
                 renderListaADM();
             }
 
+            dispararNotificacaoEmailPedido(novoPedido, 'criacao');
+
             alert(`Pedido ${novoPedido.id} registrado com sucesso!\nComissão gerada: R$ ${valorComissao.toFixed(2).replace('.', ',')}`);
             event.target.reset();
             alternarLogisticaADM();
@@ -782,7 +806,7 @@
             renderListaPedidos();
         }
 
-        // Alterar Status do Pedido + Estorno Automático se Cancelado
+        // Alterar Status do Pedido + Notificação por E-mail + Estorno Automático se Cancelado
         function alterarStatusPedidoADM(pedidoId, novoStatus) {
             if (!isAdmin) return;
             const pedidos = getPedidosRegistrados();
@@ -813,6 +837,9 @@
 
             pedidos[idx].status = novoStatus;
             localStorage.setItem('acsaPedidos', JSON.stringify(pedidos));
+
+            dispararNotificacaoEmailPedido(pedidos[idx], 'atualizacao');
+
             renderListaPedidos();
             renderListaEquipe();
         }
