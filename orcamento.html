@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposta Comercial / Orçamento | Acsa Design</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #f0eeeb;
+            color: #1a1816;
+        }
+        .orcamento-toolbar {
+            max-width: 820px;
+            margin: 24px auto 16px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 0 16px;
+        }
+        .orcamento-folha {
+            max-width: 820px;
+            margin: 0 auto 48px auto;
+            background: #ffffff;
+            border: 1px solid var(--border-gray);
+            padding: 48px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+        .orc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid var(--accent-gold);
+            padding-bottom: 24px;
+            margin-bottom: 28px;
+        }
+        .orc-header img {
+            height: 44px;
+            margin-bottom: 8px;
+        }
+        .orc-meta {
+            text-align: right;
+            font-size: 12px;
+            color: #555;
+            line-height: 1.6;
+        }
+        .orc-cliente-box {
+            background: var(--bg-soft);
+            border: 1px solid var(--border-gray);
+            padding: 18px 20px;
+            margin-bottom: 28px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            font-size: 13px;
+        }
+        .orc-cliente-box input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px dashed #bbb;
+            background: transparent;
+            padding: 4px 0;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a1816;
+        }
+        .orc-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 28px;
+            font-size: 13px;
+        }
+        .orc-tabela th {
+            text-align: left;
+            padding: 12px;
+            background: #1a1816;
+            color: #ffffff;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.8px;
+        }
+        .orc-tabela td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--border-gray);
+            vertical-align: top;
+        }
+        .orc-totais {
+            margin-left: auto;
+            width: 320px;
+            background: var(--bg-soft);
+            border: 1px solid var(--border-gray);
+            padding: 18px;
+            font-size: 13px;
+        }
+        .orc-linha {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .orc-total-destaque {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-gray);
+            padding-top: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .orc-rodape {
+            margin-top: 36px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-gray);
+            font-size: 12px;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        /* Oculta botões na hora de salvar/imprimir PDF */
+        @media print {
+            body { background: #ffffff; }
+            .orcamento-toolbar, #acsa-whatsapp-float { display: none !important; }
+            .orcamento-folha {
+                margin: 0;
+                padding: 20px;
+                border: none;
+                box-shadow: none;
+                max-width: 100%;
+            }
+            .orc-cliente-box input {
+                border-bottom: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="orcamento-toolbar">
+        <a href="javascript:history.back()" class="btn-outline" style="background: #fff;">&larr; Voltar</a>
+        <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn-primary" style="border: none; cursor: pointer;" onclick="window.print()">Salvar PDF / Imprimir Proposta</button>
+        </div>
+    </div>
+
+    <div class="orcamento-folha">
+        <div class="orc-header">
+            <div>
+                <img src="logo-acsa.png" alt="Acsa Design">
+                <p style="font-size: 12px; color: #666;">Revestimentos • Papéis de Parede • Painéis Ripados • Acsa Home & Baby</p>
+                <p style="font-size: 11px; color: #888; margin-top: 2px;">Showroom São Gonçalo / Niterói — RJ • WhatsApp: (21) 97684-6510 • @acsa.design</p>
+            </div>
+            <div class="orc-meta">
+                <strong style="font-size: 14px; color: #1a1816; display: block;">ORÇAMENTO #<span id="orc-numero">0001</span></strong>
+                <span>Emissão: <strong id="orc-data"></strong></span><br>
+                <span>Validade: <strong>7 dias corridos</strong></span><br>
+                <span>Consultor(a): <strong id="orc-consultor">Atendimento Online</strong></span>
+            </div>
+        </div>
+
+        <!-- Dados Editáveis do Cliente antes de gerar o PDF -->
+        <div class="orc-cliente-box">
+            <div>
+                <span style="font-size: 10px; text-transform: uppercase; color: #888; display: block;">Cliente / Projeto (Clique para editar):</span>
+                <input type="text" id="orc-cliente-nome" placeholder="Nome do Cliente ou Escritório">
+            </div>
+            <div>
+                <span style="font-size: 10px; text-transform: uppercase; color: #888; display: block;">Telefone / WhatsApp / Ambiente:</span>
+                <input type="text" id="orc-cliente-contato" placeholder="Ex: (21) 99999-9999 • Sala de Estar">
+            </div>
+        </div>
+
+        <!-- Tabela de Itens Orçados -->
+        <table class="orc-tabela">
+            <thead>
+                <tr>
+                    <th>Produto / Especificação</th>
+                    <th>Dimensionamento</th>
+                    <th style="text-align: right;">Unitário</th>
+                    <th style="text-align: right;">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody id="orc-itens-tbody"></tbody>
+        </table>
+
+        <!-- Totais e Condições de Pagamento -->
+        <div class="orc-totais">
+            <div class="orc-linha">
+                <span>Total Tabela / Cartão (até 6x):</span>
+                <strong id="orc-total-cartao">R$ 0,00</strong>
+            </div>
+            <div class="orc-linha" style="color: #2e7d32;">
+                <span>Desconto à Vista no Pix (5%):</span>
+                <span id="orc-desconto-pix">- R$ 0,00</span>
+            </div>
+            <div class="orc-total-destaque">
+                <span>Total no Pix:</span>
+                <span id="orc-total-pix" style="color: var(--accent-gold);">R$ 0,00</span>
+            </div>
+        </div>
+
+        <div class="orc-rodape">
+            <strong>Condições Gerais da Proposta:</strong>
+            <ul style="margin-top: 6px; padding-left: 18px;">
+                <li>Parcelamento em até <strong>6x sem juros</strong> no cartão de crédito ou <strong>5% de desconto</strong> para pagamento à vista via Pix.</li>
+                <li>Retirada gratuita no Showroom Acsa Design (São Gonçalo / Niterói - RJ) ou envio via transportadora para todo o Brasil (frete grátis acima de R$ 299,00 na modalidade econômica).</li>
+                <li>Sujeito à disponibilidade de lote em estoque no momento da confirmação do pedido.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        const dadosOrcamento = JSON.parse(localStorage.getItem('acsaOrcamentoAtual') || 'null');
+        const userLogado = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
+
+        document.getElementById('orc-numero').innerText = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('orc-data').innerText = new Date().toLocaleDateString('pt-BR');
+
+        if (dadosOrcamento && dadosOrcamento.consultor) {
+            document.getElementById('orc-consultor').innerText = dadosOrcamento.consultor;
+        } else if (userLogado) {
+            document.getElementById('orc-consultor').innerText = userLogado.nome;
+        }
+
+        if (dadosOrcamento && dadosOrcamento.clienteNome) {
+            document.getElementById('orc-cliente-nome').value = dadosOrcamento.clienteNome;
+        }
+        if (dadosOrcamento && dadosOrcamento.clienteContato) {
+            document.getElementById('orc-cliente-contato').value = dadosOrcamento.clienteContato;
+        }
+
+        const itens = (dadosOrcamento && dadosOrcamento.itens && dadosOrcamento.itens.length > 0)
+            ? dadosOrcamento.itens
+            : getCart();
+
+        const tbody = document.getElementById('orc-itens-tbody');
+        let totalGeral = 0;
+
+        if (!itens || itens.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #888; padding: 24px;">Nenhum item selecionado para orçamento.</td></tr>`;
+        } else {
+            tbody.innerHTML = itens.map(item => {
+                const sub = Number(item.preco) || 0;
+                const qtd = Number(item.qtdPecas) || 1;
+                const unit = Number(item.precoUnitario) || (sub / qtd);
+                totalGeral += sub;
+
+                return `
+                    <tr>
+                        <td>
+                            <strong>${item.nome}</strong>
+                            ${item.descricao ? `<span style="display: block; font-size: 11px; color: #777; margin-top: 3px;">${item.descricao}</span>` : ''}
+                        </td>
+                        <td>${item.detalhe || `${qtd} un.`}</td>
+                        <td style="text-align: right;">R$ ${unit.toFixed(2).replace('.', ',')}</td>
+                        <td style="text-align: right;"><strong>R$ ${sub.toFixed(2).replace('.', ',')}</strong></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        const descontoPix = totalGeral * 0.05;
+        const totalComPix = totalGeral - descontoPix;
+
+        document.getElementById('orc-total-cartao').innerText = 'R$ ' + totalGeral.toFixed(2).replace('.', ',');
+        document.getElementById('orc-desconto-pix').innerText = '- R$ ' + descontoPix.toFixed(2).replace('.', ',');
+        document.getElementById('orc-total-pix').innerText = 'R$ ' + totalComPix.toFixed(2).replace('.', ',');
+    </script>
+</body>
+</html>

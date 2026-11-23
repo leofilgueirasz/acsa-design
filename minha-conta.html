@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Conta | Acsa Design</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <span>ÁREA DO CLIENTE & PARCEIRO ACSA DESIGN • ACOMPANHAMENTO DE PEDIDOS</span>
+    </div>
+
+    <header class="header">
+        <div class="container header-content">
+            <nav class="nav-links">
+                <a href="index.html">Início</a>
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="marca.html">A Marca</a>
+            </nav>
+
+            <a href="index.html" class="brand-logo">
+                <img src="logo-acsa.png" alt="Acsa Design">
+            </a>
+
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleCart()">Sacola (<span id="cart-count">0</span>)</button>
+                <button type="button" class="icon-btn" onclick="sairDaConta()">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 48px 24px 80px 24px;">
+
+        <!-- Cabeçalho do Perfil -->
+        <div class="checkout-step-box" style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <span class="subtitle" id="conta-badge-perfil">MINHA CONTA</span>
+                <h1 id="conta-nome-usuario" style="font-size: 28px; margin-bottom: 4px;">Bem-vindo(a)</h1>
+                <p id="conta-email-usuario" style="font-size: 13px; color: #777;"></p>
+            </div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <a href="home.html" class="btn-outline">Explorar Catálogo</a>
+                <a href="checkout.html" class="btn-primary">Ir para Sacola</a>
+            </div>
+        </div>
+
+        <!-- Cartão Exclusivo para Arquitetos/Designers Parceiros (Oculto para Cliente comum) -->
+        <div id="box-beneficio-parceiro" style="display: none; background: var(--bg-soft); border: 1px solid var(--accent-gold); padding: 28px; margin-bottom: 32px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <div style="max-width: 580px;">
+                    <span class="subtitle" style="color: var(--accent-gold);">BENEFÍCIO EXCLUSIVO ACSA PRO</span>
+                    <h2 style="font-size: 22px; margin-bottom: 8px;">Seu Cupom de Parceiro: 10% OFF</h2>
+                    <p style="font-size: 13px; color: #666; line-height: 1.6;">
+                        Utilize este código na etapa de pagamento do checkout para aplicar <strong>10% de desconto</strong> em compras próprias ou de seus clientes especificados.
+                    </p>
+                </div>
+                <div style="background: var(--bg-main); border: 1px dashed var(--accent-gold); padding: 16px 24px; text-align: center;">
+                    <span style="font-size: 11px; color: #888; display: block; margin-bottom: 4px;">CÓDIGO PROMOCIONAL</span>
+                    <strong id="codigo-cupom-parceiro" style="font-size: 22px; letter-spacing: 2px; color: var(--text-dark); display: block; margin-bottom: 10px;">ACSAPRO10</strong>
+                    <button type="button" class="btn-primary" style="padding: 8px 16px; font-size: 11px; border: none; cursor: pointer;" onclick="copiarCupomParceiro()">
+                        Copiar Cupom
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Histórico de Pedidos do Cliente / Parceiro -->
+        <div class="checkout-step-box">
+            <span class="subtitle">HISTÓRICO DE COMPRAS</span>
+            <h2 style="margin-bottom: 6px;">Meus Pedidos (<span id="conta-total-pedidos">0</span>)</h2>
+            <p style="font-size: 13px; color: #777; margin-bottom: 20px;">Acompanhe os pedidos realizados com seu cadastro ou e-mail na Acsa Design.</p>
+
+            <div id="lista-meus-pedidos" style="display: flex; flex-direction: column; gap: 14px;"></div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo">ACSA <span>DESIGN</span></div>
+                <p>Home • Baby</p>
+            </div>
+            <div class="footer-links">
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="marca.html">A Marca</a>
+            </div>
+            <div class="footer-copy">
+                <p>&copy; 2026 Acsa Design. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Gaveta da Sacola -->
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Sua Sacola</h3>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        <div id="cart-items" class="cart-items">
+            <p class="empty-cart-msg">Sua sacola está vazia.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal">R$ 0,00</span>
+            </div>
+            <a href="checkout.html" class="btn-primary" style="width: 100%; text-align: center; display: block;">Finalizar Compra</a>
+        </div>
+    </div>
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        const userConta = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
+        if (!userConta) {
+            window.location.href = 'login.html';
+        } else if (userConta.perfil === 'admin') {
+            window.location.href = 'admin.html';
+        } else if (userConta.perfil === 'vendedor') {
+            window.location.href = 'vendedor.html';
+        }
+
+        function copiarCupomParceiro() {
+            navigator.clipboard.writeText('ACSAPRO10').then(() => {
+                alert('Cupom ACSAPRO10 copiado! Cole no campo de cupom ao finalizar sua compra.');
+            });
+        }
+
+        function carregarPainelConta() {
+            if (!userConta) return;
+
+            const isParceiro = userConta.perfil === 'parceiro';
+            document.getElementById('conta-badge-perfil').innerText = isParceiro ? 'ÁREA DO ARQUITETO / PARCEIRO' : 'MINHA CONTA • CLIENTE';
+            document.getElementById('conta-nome-usuario').innerText = `Olá, ${userConta.nome}`;
+            document.getElementById('conta-email-usuario').innerText = `E-mail cadastrado: ${userConta.email}`;
+
+            if (isParceiro) {
+                document.getElementById('box-beneficio-parceiro').style.display = 'block';
+            }
+
+            const todosPedidos = typeof getPedidosRegistrados === 'function' ? getPedidosRegistrados() : [];
+            const nomeBase = userConta.nome.split('(')[0].trim().toLowerCase();
+
+            const meusPedidos = todosPedidos.filter(p => {
+                const matchEmail = p.clienteEmail && p.clienteEmail.toLowerCase() === userConta.email.toLowerCase();
+                const matchNome = p.cliente && p.cliente.toLowerCase().includes(nomeBase);
+                return matchEmail || matchNome;
+            });
+
+            document.getElementById('conta-total-pedidos').innerText = meusPedidos.length;
+            const container = document.getElementById('lista-meus-pedidos');
+
+            if (meusPedidos.length === 0) {
+                container.innerHTML = `
+                    <div style="background: var(--bg-soft); padding: 24px; border: 1px solid var(--border-gray); text-align: center;">
+                        <p style="font-size: 14px; color: #777; margin-bottom: 14px;">Você ainda não possui pedidos registrados nesta conta.</p>
+                        <a href="home.html" class="btn-primary">Conhecer Coleções</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = meusPedidos.map(p => `
+                <div style="background: var(--bg-soft); padding: 16px; border: 1px solid var(--border-gray); font-size: 13px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong>Pedido ${p.id}</strong>
+                        <span style="font-size: 12px; color: #777;">Data: ${p.data} &bull; <strong style="color: var(--accent-gold);">${p.status || 'Confirmado'}</strong>
+                    </div>
+                    <p style="color: #555; margin-bottom: 8px;">${p.itemResumo}</p>
+                    <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--border-gray); font-size: 12px;">
+                        <span>Pagamento: <strong>${p.pagamento}</strong></span>
+                        <span>Valor Total: <strong>R$ ${Number(p.valorTotal).toFixed(2).replace('.', ',')}</strong></span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', carregarPainelConta);
+    </script>
+</body>
+</html>

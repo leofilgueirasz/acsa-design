@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra | Acsa Design</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <span>COMPRA 100% SEGURA • RETIRADA GRÁTIS NA LOJA • 5% OFF NO PIX</span>
+    </div>
+
+    <header class="header">
+        <div class="container header-content" style="justify-content: space-between;">
+            <a href="index.html" style="text-decoration: none; color: var(--text-dark); font-size: 13px;">&larr; Continuar Comprando</a>
+            <a href="index.html" class="brand-logo">
+                <img src="logo-acsa.png" alt="Acsa Design">
+            </a>
+            <span style="font-size: 12px; font-weight: 600; color: var(--accent-gold);">AMBIENTE SEGURO</span>
+        </div>
+    </header>
+
+    <main class="container checkout-page">
+        <div class="checkout-grid">
+            
+            <!-- Coluna Esquerda: Etapas do Pedido -->
+            <form class="checkout-forms" onsubmit="concluirPedido(event)">
+                
+                <!-- ETAPA 1: Dados Pessoais -->
+                <div class="checkout-step-box">
+                    <span class="subtitle">ETAPA 1 DE 3</span>
+                    <h2>Dados de Contato</h2>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Nome Completo</label>
+                            <input type="text" id="cliente-nome" placeholder="Ex: Maria Silva" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CPF / CNPJ</label>
+                            <input type="text" placeholder="000.000.000-00" required>
+                        </div>
+                    </div>
+                    <div class="form-row-2" style="margin-top: 14px;">
+                        <div class="form-group">
+                            <label>E-mail para confirmação</label>
+                            <input type="email" id="cliente-email" placeholder="seu@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>WhatsApp / Telefone</label>
+                            <input type="tel" id="cliente-telefone" placeholder="(21) 99999-9999" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ETAPA 2: Entrega ou Retirada na Loja -->
+                <div class="checkout-step-box">
+                    <span class="subtitle">ETAPA 2 DE 3</span>
+                    <h2>Opção de Recebimento</h2>
+
+                    <div class="payment-options" style="margin-bottom: 20px;">
+                        <label class="payment-radio active" onclick="selecionarEntrega('entrega', this)">
+                            <input type="radio" name="tipo_entrega" value="entrega" checked>
+                            <div>
+                                <strong>Receber no meu Endereço</strong>
+                                <span style="display: block; font-size: 12px; font-weight: 300;" id="label-frete-opcao">Cotação multi-transportadoras para todo o Brasil (Grátis acima de R$ 299 no econômico)</span>
+                            </div>
+                        </label>
+
+                        <label class="payment-radio" onclick="selecionarEntrega('retirada', this)">
+                            <input type="radio" name="tipo_entrega" value="retirada">
+                            <div>
+                                <strong>Retirar na Loja / Showroom Acsa Design</strong>
+                                <span style="display: block; font-size: 12px; color: var(--accent-gold); font-weight: 600;">GRÁTIS • Disponível em até 24h úteis</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Formulário de Endereço e Cotação de Frete -->
+                    <div id="bloco-endereco">
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>CEP de Entrega *</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <input type="text" id="checkout-cep" placeholder="00000-000" maxlength="9" style="flex: 1;" required>
+                                    <button type="button" class="btn-outline" style="padding: 0 16px;" onclick="buscarFretesCheckout()">Calcular</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Transportadora Escolhida *</label>
+                                <div id="checkout-opcoes-frete" style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+                                    <span style="color: #888; padding: 10px; border: 1px solid var(--border-gray);">Digite seu CEP e clique em Calcular para ver as transportadoras.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row-2" style="margin-top: 14px;">
+                            <div class="form-group">
+                                <label>Cidade / Estado *</label>
+                                <input type="text" id="end-cidade" placeholder="Ex: Niterói - RJ" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Bairro *</label>
+                                <input type="text" id="end-bairro" placeholder="Ex: Icaraí" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row-2" style="margin-top: 14px;">
+                            <div class="form-group">
+                                <label>Rua / Avenida *</label>
+                                <input type="text" id="end-rua" placeholder="Nome da rua" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Número e Complemento *</label>
+                                <input type="text" id="end-num" placeholder="Nº 100, Apto 201" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aviso de Retirada na Loja -->
+                    <div id="bloco-info-retirada" style="display: none; background: var(--bg-soft); padding: 16px; border: 1px solid var(--border-gray); font-size: 13px;">
+                        <strong>Endereço para Retirada:</strong>
+                        <p style="margin-top: 4px; font-weight: 300;">Showroom Acsa Design — São Gonçalo / Niterói, RJ. Assim que o pedido for separado, você receberá o aviso pelo WhatsApp e E-mail.</p>
+                    </div>
+                </div>
+
+                <!-- ETAPA 3: Formas de Pagamento -->
+                <div class="checkout-step-box">
+                    <span class="subtitle">ETAPA 3 DE 3</span>
+                    <h2>Forma de Pagamento</h2>
+                    
+                    <div class="payment-options">
+                        <label class="payment-radio active" onclick="selecionarPagamento('pix', this)">
+                            <input type="radio" name="pagamento" value="pix" checked>
+                            <div>
+                                <strong>Pix (Aprovação Imediata)</strong>
+                                <span style="display: block; font-size: 12px; color: var(--accent-gold); font-weight: 600;">5% de desconto aplicado automaticamente</span>
+                            </div>
+                        </label>
+
+                        <label class="payment-radio" onclick="selecionarPagamento('cartao', this)">
+                            <input type="radio" name="pagamento" value="cartao">
+                            <div>
+                                <strong>Cartão de Crédito</strong>
+                                <span style="display: block; font-size: 12px; font-weight: 300;">Parcele em até 6x sem juros</span>
+                            </div>
+                        </label>
+
+                        <label class="payment-radio" onclick="selecionarPagamento('boleto', this)">
+                            <input type="radio" name="pagamento" value="boleto">
+                            <div>
+                                <strong>Boleto Bancário</strong>
+                                <span style="display: block; font-size: 12px; font-weight: 300;">Vencimento em 2 dias úteis (compensação em até 48h)</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Campos do Cartão -->
+                    <div id="dados-cartao" style="display: none; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border-gray);">
+                        <div class="form-group">
+                            <label>Número do Cartão</label>
+                            <input type="text" placeholder="0000 0000 0000 0000" maxlength="19">
+                        </div>
+                        <div class="form-group" style="margin-top: 12px;">
+                            <label>Nome Impresso no Cartão</label>
+                            <input type="text" placeholder="Como aparece no cartão">
+                        </div>
+                        <div class="form-row-2" style="margin-top: 12px;">
+                            <div class="form-group">
+                                <label>Validade</label>
+                                <input type="text" placeholder="MM/AA" maxlength="5">
+                            </div>
+                            <div class="form-group">
+                                <label>CVV</label>
+                                <input type="text" placeholder="123" maxlength="4">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 12px;">
+                            <label>Parcelamento</label>
+                            <select id="select-parcelas" style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit; font-size: 14px; background: var(--bg-main);"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 18px; font-size: 14px;">Finalizar e Confirmar Pedido</button>
+            </form>
+
+            <!-- Coluna Direita: Resumo Financeiro do Pedido -->
+            <aside class="checkout-summary-box">
+                <h3>Resumo do Pedido</h3>
+                <div id="checkout-items-list" class="checkout-items-list"></div>
+
+                <!-- Indicação de Vendedor (Opcional) -->
+                <div style="margin: 16px 0; padding: 12px; background: var(--bg-main); border: 1px solid var(--border-gray);">
+                    <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 6px;">Foi atendido por algum vendedor? (Opcional)</label>
+                    <select id="checkout-vendedor-select" style="width: 100%; padding: 8px; border: 1px solid var(--border-gray); font-family: inherit; font-size: 12px;">
+                        <option value="">Compra direta pelo site</option>
+                    </select>
+                </div>
+
+                <!-- Campo de Cupom Promocional / Arquiteto -->
+                <div style="margin: 16px 0; padding: 12px; background: var(--bg-main); border: 1px solid var(--border-gray);">
+                    <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 6px;">Cupom de Desconto ou Arquiteto Parceiro</label>
+                    <div style="display: flex; gap: 6px;">
+                        <input type="text" id="input-cupom-checkout" placeholder="Ex: ACSAPRO10" style="flex: 1; padding: 8px; border: 1px solid var(--border-gray); font-size: 12px; text-transform: uppercase;">
+                        <button type="button" class="btn-outline" style="padding: 8px 12px; font-size: 11px;" onclick="aplicarCupomCheckout()">Aplicar</button>
+                    </div>
+                    <span id="msg-cupom-status" style="font-size: 11px; display: block; margin-top: 5px;"></span>
+                </div>
+
+                <div class="summary-totals">
+                    <div class="summary-line">
+                        <span>Subtotal:</span>
+                        <span id="summary-subtotal">R$ 0,00</span>
+                    </div>
+                    <div class="summary-line">
+                        <span id="summary-shipping-label">Frete:</span>
+                        <span id="summary-shipping">A calcular</span>
+                    </div>
+                    <div class="summary-line" id="discount-line" style="color: var(--accent-gold); font-weight: 600;">
+                        <span>Desconto Pix (5%):</span>
+                        <span id="summary-discount">- R$ 0,00</span>
+                    </div>
+                    <div class="summary-total-final">
+                        <span>Total a Pagar:</span>
+                        <span id="summary-final">R$ 0,00</span>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo">ACSA <span>DESIGN</span></div>
+                <p>Home • Baby</p>
+            </div>
+            <div class="footer-copy">
+                <p>&copy; 2026 Acsa Design. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        let tipoEntrega = 'entrega';
+        let metodoPagamento = 'pix';
+        let totalGeralCalculado = 0;
+        let freteSelecionadoValor = 0;
+        let freteFoiCalculado = false;
+        let transportadoraEscolhidaNome = '';
+        let percentualCupom = 0;
+        let codigoCupomAplicado = '';
+
+        const cuponsValidos = {
+            'ACSAPRO10': { desconto: 0.10, descricao: '10% OFF Parceria Arquiteto/Designer' },
+            'ACSA5': { desconto: 0.05, descricao: '5% OFF Promocional' },
+            'PRIMEIRACOMPRA': { desconto: 0.05, descricao: '5% OFF Primeira Compra' }
+        };
+
+        function aplicarCupomCheckout() {
+            const input = document.getElementById('input-cupom-checkout');
+            const msgEl = document.getElementById('msg-cupom-status');
+            const codigo = (input.value || '').trim().toUpperCase();
+
+            if (!codigo) {
+                percentualCupom = 0;
+                codigoCupomAplicado = '';
+                msgEl.innerText = '';
+                atualizarResumoCheckout();
+                return;
+            }
+
+            if (cuponsValidos[codigo]) {
+                percentualCupom = cuponsValidos[codigo].desconto;
+                codigoCupomAplicado = codigo;
+                msgEl.style.color = '#2e7d32';
+                msgEl.innerText = `✓ Cupom ${codigo} aplicado (${cuponsValidos[codigo].descricao})`;
+            } else {
+                percentualCupom = 0;
+                codigoCupomAplicado = '';
+                msgEl.style.color = '#b54b4b';
+                msgEl.innerText = 'Cupom inválido ou expirado.';
+            }
+            atualizarResumoCheckout();
+        }
+
+        function preencherDadosClienteLogado() {
+            const user = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
+            if (!user) return;
+            const nomeEl = document.getElementById('cliente-nome');
+            const emailEl = document.getElementById('cliente-email');
+            if (nomeEl && !nomeEl.value) nomeEl.value = user.nome.split('(')[0].trim();
+            if (emailEl && !emailEl.value) emailEl.value = user.email;
+        }
+
+        function popularVendedoresCheckout() {
+            const select = document.getElementById('checkout-vendedor-select');
+            if (!select || typeof getEquipeCadastrada !== 'function') return;
+            const equipe = getEquipeCadastrada();
+            select.innerHTML = `<option value="">Compra direta pelo site</option>` + equipe.map(v => 
+                `<option value="${v.email}" data-nome="${v.nome}" data-comissao="${v.comissao}">${v.nome}</option>`
+            ).join('');
+        }
+
+        function selecionarEntrega(tipo, labelEl) {
+            tipoEntrega = tipo;
+            labelEl.parentElement.querySelectorAll('.payment-radio').forEach(el => el.classList.remove('active'));
+            labelEl.classList.add('active');
+
+            const blocoEnd = document.getElementById('bloco-endereco');
+            const blocoRet = document.getElementById('bloco-info-retirada');
+            const inputsEnd = blocoEnd.querySelectorAll('input[type="text"]');
+
+            if (tipo === 'retirada') {
+                blocoEnd.style.display = 'none';
+                blocoRet.style.display = 'block';
+                inputsEnd.forEach(inp => inp.required = false);
+            } else {
+                blocoEnd.style.display = 'block';
+                blocoRet.style.display = 'none';
+                inputsEnd.forEach(inp => inp.required = true);
+            }
+            atualizarResumoCheckout();
+        }
+
+        function selecionarPagamento(metodo, labelEl) {
+            metodoPagamento = metodo;
+            labelEl.parentElement.querySelectorAll('.payment-radio').forEach(el => el.classList.remove('active'));
+            labelEl.classList.add('active');
+            document.getElementById('dados-cartao').style.display = (metodo === 'cartao') ? 'block' : 'none';
+            atualizarResumoCheckout();
+        }
+
+        async function buscarFretesCheckout() {
+            const cepInput = document.getElementById('checkout-cep');
+            const cep = cepInput.value;
+            const container = document.getElementById('checkout-opcoes-frete');
+            const cart = getCart();
+            const subtotal = cart.reduce((acc, i) => acc + i.preco, 0);
+
+            container.innerHTML = '<span style="color: #777; padding: 10px; border: 1px solid var(--border-gray);">Consultando transportadoras...</span>';
+
+            try {
+                const itens = cart.map(i => ({ id: i.produtoId, quantidade: i.qtdPecas || 1, preco: i.preco }));
+                const opcoes = await cotarFreteMultiTransportadoras(cep, itens, subtotal);
+
+                const cepLimpo = cep.replace(/\D/g, '');
+                fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`)
+                    .then(r => r.json())
+                    .then(via => {
+                        if (!via.erro) {
+                            const cidEl = document.getElementById('end-cidade');
+                            const baiEl = document.getElementById('end-bairro');
+                            const ruaEl = document.getElementById('end-rua');
+                            if (cidEl && !cidEl.value) cidEl.value = `${via.localidade} - ${via.uf}`;
+                            if (baiEl && !baiEl.value && via.bairro) baiEl.value = via.bairro;
+                            if (ruaEl && !ruaEl.value && via.logradouro) ruaEl.value = via.logradouro;
+                        }
+                    }).catch(() => {});
+
+                container.innerHTML = opcoes.map((op, idx) => {
+                    const precoTexto = op.preco === 0 ? '<strong style="color: var(--accent-gold);">GRÁTIS</strong>' : `R$ ${op.preco.toFixed(2).replace('.', ',')}`;
+                    return `
+                        <label style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid var(--border-gray); background: var(--bg-main); cursor: pointer;">
+                            <span style="display: flex; align-items: center; gap: 8px;">
+                                <input type="radio" name="frete_escolhido" ${idx === 0 ? 'checked' : ''} onchange="selecionarTransportadoraCheckout(${op.preco}, '${op.transportadora} ${op.servico}')">
+                                <span><strong>${op.transportadora} (${op.servico})</strong> • até ${op.prazoDias} dias úteis</span>
+                            </span>
+                            <span>${precoTexto}</span>
+                        </label>
+                    `;
+                }).join('');
+
+                if (opcoes.length > 0) {
+                    selecionarTransportadoraCheckout(opcoes[0].preco, `${opcoes[0].transportadora} ${opcoes[0].servico}`);
+                }
+            } catch (err) {
+                freteFoiCalculado = false;
+                container.innerHTML = `<span style="color: #b54b4b; padding: 10px; border: 1px solid var(--border-gray);">${err.message}</span>`;
+            }
+        }
+
+        function selecionarTransportadoraCheckout(valor, nomeServico) {
+            freteSelecionadoValor = Number(valor) || 0;
+            transportadoraEscolhidaNome = nomeServico;
+            freteFoiCalculado = true;
+            atualizarResumoCheckout();
+        }
+
+        function atualizarResumoCheckout() {
+            const cart = getCart();
+            const listEl = document.getElementById('checkout-items-list');
+            
+            if (cart.length === 0) {
+                listEl.innerHTML = '<p style="font-size: 13px; color: #888;">Nenhum item na sacola.</p>';
+                return;
+            }
+
+            let subtotal = 0;
+            listEl.innerHTML = '';
+
+            cart.forEach(item => {
+                subtotal += item.preco;
+                listEl.innerHTML += `
+                    <div class="checkout-item">
+                        <div>
+                            <strong>${item.nome}</strong>
+                            <span>${item.detalhe}</span>
+                        </div>
+                        <span>R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                `;
+            });
+
+            let frete = 0;
+            const shippingLabel = document.getElementById('summary-shipping-label');
+            const shippingValEl = document.getElementById('summary-shipping');
+
+            if (tipoEntrega === 'retirada') {
+                frete = 0;
+                shippingLabel.innerText = 'Retirada na Loja:';
+                shippingValEl.innerHTML = '<strong style="color: var(--accent-gold);">GRÁTIS</strong>';
+            } else if (!freteFoiCalculado) {
+                frete = 0;
+                shippingLabel.innerText = 'Frete:';
+                shippingValEl.innerHTML = '<span style="color: #888;">Calcule o CEP</span>';
+            } else {
+                frete = freteSelecionadoValor;
+                shippingLabel.innerText = `Frete (${transportadoraEscolhidaNome}):`;
+                shippingValEl.innerHTML = frete === 0
+                    ? '<strong style="color: var(--accent-gold);">GRÁTIS</strong>'
+                    : 'R$ ' + frete.toFixed(2).replace('.', ',');
+            }
+
+            const descontoPix = (metodoPagamento === 'pix') ? subtotal * 0.05 : 0;
+            const descontoCupom = subtotal * percentualCupom;
+            const desconto = descontoPix + descontoCupom;
+            totalGeralCalculado = Math.max(0, subtotal + frete - desconto);
+
+            document.getElementById('summary-subtotal').innerText = 'R$ ' + subtotal.toFixed(2).replace('.', ',');
+            
+            const discountLine = document.getElementById('discount-line');
+            if (desconto > 0) {
+                discountLine.style.display = 'flex';
+                const labelsDesc = [];
+                if (descontoPix > 0) labelsDesc.push('Pix 5%');
+                if (descontoCupom > 0) labelsDesc.push(`Cupom ${codigoCupomAplicado}`);
+                discountLine.querySelector('span:first-child').innerText = `Descontos (${labelsDesc.join(' + ')}):`;
+                document.getElementById('summary-discount').innerText = '- R$ ' + desconto.toFixed(2).replace('.', ',');
+            } else {
+                discountLine.style.display = 'none';
+            }
+
+            document.getElementById('summary-final').innerText = 'R$ ' + totalGeralCalculado.toFixed(2).replace('.', ',');
+
+            const selectParcelas = document.getElementById('select-parcelas');
+            if (selectParcelas) {
+                let opcoes = '';
+                for (let i = 1; i <= 6; i++) {
+                    const valorParcela = (totalGeralCalculado / i).toFixed(2).replace('.', ',');
+                    opcoes += `<option value="${i}">${i}x de R$ ${valorParcela} sem juros</option>`;
+                }
+                selectParcelas.innerHTML = opcoes;
+            }
+        }
+
+        function concluirPedido(event) {
+            event.preventDefault();
+            const cart = getCart();
+            if (cart.length === 0) {
+                alert('Sua sacola está vazia.');
+                return;
+            }
+
+            if (tipoEntrega === 'entrega' && !freteFoiCalculado) {
+                alert('Por favor, digite seu CEP e clique em "Calcular" para escolher uma transportadora.');
+                document.getElementById('checkout-cep').focus();
+                return;
+            }
+
+            const nome = document.getElementById('cliente-nome').value.trim();
+            const emailCliente = document.getElementById('cliente-email').value.trim();
+            const telefone = document.getElementById('cliente-telefone').value.trim();
+            
+            let msgEntrega = 'Retirada na Loja';
+            if (tipoEntrega === 'entrega') {
+                const cep = document.getElementById('checkout-cep').value.trim();
+                const cidade = document.getElementById('end-cidade').value.trim();
+                const bairro = document.getElementById('end-bairro').value.trim();
+                const rua = document.getElementById('end-rua').value.trim();
+                const num = document.getElementById('end-num').value.trim();
+                msgEntrega = `Envio (${transportadoraEscolhidaNome}): ${rua}, ${num} - ${bairro}, ${cidade} (CEP ${cep})`;
+            }
+
+            // 1. Dá baixa automática no estoque de cada item comprado
+            cart.forEach(item => {
+                if (item.produtoId && typeof darBaixaEstoque === 'function') {
+                    darBaixaEstoque(item.produtoId, item.qtdPecas || 1);
+                }
+            });
+
+            // 2. Verifica se houve indicação de vendedor para gerar comissão
+            const selectVend = document.getElementById('checkout-vendedor-select');
+            const optionVend = selectVend.options[selectVend.selectedIndex];
+            const vendedorEmail = selectVend.value;
+            const vendedorNome = optionVend?.dataset?.nome || "Site Online";
+            const percComissao = parseFloat(optionVend?.dataset?.comissao) || 0;
+            const valorComissao = (totalGeralCalculado * percComissao) / 100;
+
+            // 3. Registra o pedido no painel administrativo e no histórico do cliente
+            if (typeof salvarPedidoSistema === 'function') {
+                const resumoItens = cart.map(i => `${i.nome} (${i.detalhe})`).join(' + ');
+                const tagCupom = codigoCupomAplicado ? ` • Cupom: ${codigoCupomAplicado}` : '';
+                salvarPedidoSistema({
+                    id: 'SITE-' + Math.floor(1000 + Math.random() * 9000),
+                    data: new Date().toLocaleDateString('pt-BR'),
+                    cliente: nome,
+                    clienteEmail: emailCliente,
+                    telefone: telefone,
+                    itemResumo: `${resumoItens} • ${msgEntrega}${tagCupom}`,
+                    valorTotal: totalGeralCalculado,
+                    pagamento: metodoPagamento.toUpperCase(),
+                    vendedorEmail: vendedorEmail,
+                    vendedorNome: vendedorNome,
+                    percComissao: percComissao,
+                    valorComissao: valorComissao
+                });
+            }
+
+            alert(`Pedido confirmado para ${nome}!\nModalidade: ${msgEntrega}\nPagamento: ${metodoPagamento.toUpperCase()}\n\nO estoque já foi atualizado e seu pedido foi registrado!`);
+            localStorage.removeItem('acsaCart');
+            window.location.href = 'index.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            preencherDadosClienteLogado();
+            popularVendedoresCheckout();
+            atualizarResumoCheckout();
+        });
+    </script>
+</body>
+</html>

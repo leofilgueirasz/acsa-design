@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Interno | Acsa Design</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <span id="top-bar-role-text">PAINEL ADMINISTRATIVO ACSA DESIGN • GESTÃO INTEGRADA</span>
+    </div>
+
+    <header class="header">
+        <div class="container header-content">
+            <nav class="nav-links">
+                <a href="index.html">Ver Loja Online</a>
+                <a href="admin.html" class="active" id="nav-painel-label">Gestão do Site</a>
+            </nav>
+            <a href="index.html" class="brand-logo">
+                <img src="logo-acsa.png" alt="Acsa Design">
+            </a>
+            <div class="header-actions">
+                <span id="usuario-logado-badge" style="font-size: 12px; color: #777; margin-right: 12px;"></span>
+                <button type="button" class="icon-btn" onclick="sairDaConta()">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 40px 24px 80px 24px;">
+        
+        <!-- Aviso exclusivo quando logado como VENDEDOR -->
+        <div id="aviso-modo-vendedor" style="display: none; background: var(--bg-soft); border-left: 3px solid var(--accent-gold); padding: 16px 20px; margin-bottom: 28px;">
+            <strong style="font-size: 14px; display: block;">Modo Consulta — Perfil Vendedor</strong>
+            <span id="texto-comissao-vendedor" style="font-size: 13px; color: #666;">Você tem acesso completo a todas as informações, preços, rendimentos e especificações técnicas do catálogo. Alterações são restritas à administração.</span>
+        </div>
+
+        <!-- Barra de Navegação por Abas (Exclusiva para ADM) -->
+        <div id="barra-abas-adm" style="display: flex; gap: 12px; border-bottom: 1px solid var(--border-gray); padding-bottom: 16px; margin-bottom: 32px; flex-wrap: wrap;">
+            <button type="button" id="btn-aba-catalogo" class="cat-btn active" onclick="alternarAbaPainel('catalogo')">
+                Novo Item no Catálogo
+            </button>
+            <button type="button" id="btn-aba-vendedores" class="cat-btn" onclick="alternarAbaPainel('vendedores')">
+                Cadastrar Vendedor & Comissões
+            </button>
+            <button type="button" id="btn-aba-pedidos" class="cat-btn" onclick="alternarAbaPainel('pedidos')">
+                Cadastrar / Ver Pedidos
+            </button>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- ABA 1: CATÁLOGO E NOVO ITEM                                -->
+        <!-- ========================================================== -->
+        <section id="secao-aba-catalogo">
+            <div id="admin-main-grid" class="checkout-grid">
+                
+                <!-- Formulário de Cadastro de Produto (Oculto para Vendedor) -->
+                <form id="form-cadastro-produto" class="checkout-step-box" onsubmit="salvarNovoProdutoADM(event)">
+                    <span class="subtitle">CATÁLOGO DE PRODUTOS</span>
+                    <h2>Novo Item no Catálogo</h2>
+
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label>Nome do Produto *</label>
+                        <input type="text" id="adm-nome" placeholder="Ex: Papel de Parede Vinílico Xadrez Marrom Claro" required>
+                    </div>
+
+                    <div class="form-row-2" style="margin-bottom: 14px;">
+                        <div class="form-group">
+                            <label>Universo (Linha) *</label>
+                            <select id="adm-linha" style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit;">
+                                <option value="home">Acsa Home</option>
+                                <option value="baby">Acsa Baby</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoria Principal *</label>
+                            <input type="text" id="adm-categoria" placeholder="Ex: Papel de Parede, Painel Ripado, Jardim Artificial..." required>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="margin-bottom: 14px;">
+                        <div class="form-group">
+                            <label>Subcategoria / Estilo *</label>
+                            <input type="text" id="adm-subcategoria" placeholder="Ex: Xadrez, Floral, Interno, Externo..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de Venda / Cálculo *</label>
+                            <select id="adm-tipo-venda" onchange="alternarCampoRolo()" style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit;">
+                                <option value="rolo">Por Rolo (Cálculo automático de m²)</option>
+                                <option value="barra">Por Barra (Painel Ripado)</option>
+                                <option value="placa">Por Placa (Jardim Artificial)</option>
+                                <option value="m2">Por Metro Quadrado (m² direto)</option>
+                                <option value="unidade">Por Unidade (Sem metragem)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="margin-bottom: 14px;">
+                        <div class="form-group">
+                            <label>Preço Atual (R$) *</label>
+                            <input type="number" id="adm-preco" step="0.01" placeholder="189.90" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Preço Antigo Riscado (R$)</label>
+                            <input type="number" id="adm-preco-antigo" step="0.01" placeholder="229.90">
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="margin-bottom: 14px;">
+                        <div class="form-group" id="campo-cobertura-rolo">
+                            <label>Cobertura / Metragem (m²)</label>
+                            <input type="number" id="adm-cobertura" step="0.001" value="4.3">
+                        </div>
+                        <div class="form-group">
+                            <label>Quantidade em Estoque *</label>
+                            <input type="number" id="adm-estoque" min="0" value="20" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 18px;">
+                        <label>Descrição Comercial *</label>
+                        <textarea id="adm-descricao" rows="3" style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit; font-size: 14px;" placeholder="Descreva os diferenciais, ambientes indicados..." required></textarea>
+                    </div>
+
+                    <!-- Fotos -->
+                    <div style="background: var(--bg-soft); padding: 16px; border: 1px solid var(--border-gray); margin-bottom: 18px;">
+                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 10px;">Fotos do Produto (Escolha do PC ou caminho ex: img/foto.webp)</label>
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <span style="font-size: 11px;">Foto 1 (Principal):</span>
+                            <input type="file" accept="image/*" onchange="converterImagemBase64(this, 'img-url-1')" style="font-size: 12px; padding: 6px;">
+                            <input type="text" id="img-url-1" placeholder="Ou caminho: img/nome-da-foto.webp" style="margin-top: 4px;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <span style="font-size: 11px;">Foto 2 (Detalhe / Textura):</span>
+                            <input type="file" accept="image/*" onchange="converterImagemBase64(this, 'img-url-2')" style="font-size: 12px; padding: 6px;">
+                            <input type="text" id="img-url-2" placeholder="Caminho ou arquivo selecionado" style="margin-top: 4px;">
+                        </div>
+                        <div class="form-group">
+                            <span style="font-size: 11px;">Foto 3 (Ambiente Decorado):</span>
+                            <input type="file" accept="image/*" onchange="converterImagemBase64(this, 'img-url-3')" style="font-size: 12px; padding: 6px;">
+                            <input type="text" id="img-url-3" placeholder="Caminho ou arquivo selecionado" style="margin-top: 4px;">
+                        </div>
+                    </div>
+
+                    <!-- Ficha Técnica -->
+                    <div style="background: var(--bg-soft); padding: 16px; border: 1px solid var(--border-gray); margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <label style="font-size: 12px; font-weight: 600;">Especificações / Dimensões Técnicas</label>
+                            <button type="button" class="btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="adicionarLinhaSpec()">+ Adicionar Campo</button>
+                        </div>
+                        <div id="specs-inputs-list" style="display: flex; flex-direction: column; gap: 8px;">
+                            <div class="form-row-2">
+                                <input type="text" class="spec-key" value="Coleção">
+                                <input type="text" class="spec-val" placeholder="Ex: Biarritz">
+                            </div>
+                            <div class="form-row-2">
+                                <input type="text" class="spec-key" value="Padrão">
+                                <input type="text" class="spec-val" placeholder="Ex: Decorativo">
+                            </div>
+                            <div class="form-row-2">
+                                <input type="text" class="spec-key" value="Cor">
+                                <input type="text" class="spec-val" placeholder="Ex: Marrom Claro">
+                            </div>
+                            <div class="form-row-2">
+                                <input type="text" class="spec-key" value="Acabamento">
+                                <input type="text" class="spec-val" placeholder="Ex: Vinílico, lavável, em alto relevo">
+                            </div>
+                            <div class="form-row-2">
+                                <input type="text" class="spec-key" value="Medida / Rolo">
+                                <input type="text" class="spec-val" placeholder="Ex: 9,5 m × 0,53 m (cobertura de 4,3 m²)">
+                            </div>
+                            <div class="form-row-2">
+                                <input type="text" class="spec-key" value="Garantia">
+                                <input type="text" class="spec-val" placeholder="Ex: 2 anos contra defeitos de fabricação">
+                            </div>
+                        </div>
+                    </div>
+
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 20px; cursor: pointer;">
+                        <input type="checkbox" id="adm-destaque" checked> Exibir na vitrine de destaques da Página Inicial
+                    </label>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 16px;">Salvar Produto no Site</button>
+                </form>
+
+                <!-- Lista Compacta do Catálogo Completo -->
+                <aside class="checkout-summary-box">
+                    <h3>Catálogo Completo (<span id="adm-total-count">0</span> produtos)</h3>
+                    <p style="font-size: 12px; color: #777; margin-bottom: 12px;">Clique em Editar para alterar valor, estoque ou metragem.</p>
+                    
+                    <button type="button" id="btn-restaurar-padrao" class="btn-outline" style="width: 100%; margin-bottom: 16px; font-size: 12px; padding: 8px;" onclick="if(confirm('Restaurar todos os produtos originais do catálogo?')) { localStorage.removeItem('acsaCatalogo'); location.reload(); }">
+                        Restaurar Produtos Originais
+                    </button>
+
+                    <div id="adm-lista-produtos" style="display: flex; flex-direction: column; gap: 10px; max-height: 950px; overflow-y: auto;"></div>
+                </aside>
+
+            </div>
+        </section>
+
+        <!-- ========================================================== -->
+        <!-- ABA 2: CADASTRAR VENDEDOR & COMISSÕES (EXCLUSIVO ADM)      -->
+        <!-- ========================================================== -->
+        <section id="secao-aba-vendedores" style="display: none;">
+            <div class="checkout-grid">
+                
+                <!-- Formulário de Cadastro do Vendedor -->
+                <form class="checkout-step-box" onsubmit="salvarNovoVendedorADM(event)">
+                    <span class="subtitle">EQUIPE COMERCIAL & COMISSIONAMENTO</span>
+                    <h2>Cadastrar Vendedor</h2>
+                    <p style="font-size: 12px; color: #777; margin-bottom: 18px;">O vendedor acessa o catálogo técnico pelo botão Entrar normal usando o e-mail e senha abaixo, sem permissão para alterar produtos.</p>
+
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label>Nome Completo do Vendedor *</label>
+                        <input type="text" id="vend-nome" placeholder="Ex: Carlos Eduardo Mendes" required>
+                    </div>
+
+                    <div class="form-row-2" style="margin-bottom: 14px;">
+                        <div class="form-group">
+                            <label>CPF do Vendedor *</label>
+                            <input type="text" id="vend-cpf" placeholder="000.000.000-00" maxlength="14" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Comissão da Loja (%) *</label>
+                            <div style="display: flex; align-items: center; border: 1px solid var(--border-gray); background: var(--bg-main);">
+                                <input type="number" id="vend-comissao" step="0.1" min="0" max="100" placeholder="Ex: 5" style="border: none; flex: 1;" required>
+                                <span style="padding: 0 14px; font-weight: 600; color: var(--accent-gold);">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="margin-bottom: 20px;">
+                        <div class="form-group">
+                            <label>E-mail de Acesso *</label>
+                            <input type="email" id="vend-email" placeholder="carlos@acsadesign.com.br" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Senha de Acesso *</label>
+                            <input type="text" id="vend-senha" placeholder="Crie uma senha" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 16px;">Cadastrar Vendedor</button>
+                </form>
+
+                <!-- Relatório de Vendedores e Saldo de Comissões a Pagar -->
+                <aside class="checkout-summary-box">
+                    <h3>Vendedores Cadastrados & Comissões</h3>
+                    <p style="font-size: 12px; color: #777; margin-bottom: 16px;">Acompanhe o percentual cadastrado e o total de comissões geradas pelas vendas de cada vendedor.</p>
+                    <div id="lista-equipe-adm" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                </aside>
+
+            </div>
+        </section>
+
+        <!-- ========================================================== -->
+        <!-- ABA 3: CADASTRAR PEDIDO & CÁLCULO DE COMISSÃO (EXCLUSIVO ADM) -->
+        <!-- ========================================================== -->
+        <section id="secao-aba-pedidos" style="display: none;">
+            <div class="checkout-grid">
+                
+                <!-- Lançar Novo Pedido Manual / Balcão / WhatsApp -->
+                <form class="checkout-step-box" onsubmit="salvarNovoPedidoADM(event)">
+                    <span class="subtitle">REGISTRO DE VENDA</span>
+                    <h2>Cadastrar Pedido</h2>
+                    <p style="font-size: 12px; color: #777; margin-bottom: 18px;">Registre pedidos realizados na loja ou WhatsApp e vincule ao vendedor responsável para gerar a comissão e dar baixa no estoque.</p>
+
+                    <div class="form-row-2" style="margin-bottom: 14px;">
+                        <div class="form-group">
+                            <label>Nome do Cliente *</label>
+                            <input type="text" id="ped-cliente" placeholder="Ex: Fernanda Almeida" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone / WhatsApp</label>
+                            <input type="text" id="ped-telefone" placeholder="(21) 99999-9999">
+                        </div>
+                    </div>
+
+                    <!-- Modalidade de Entrega ou Retirada na Loja -->
+                    <div style="background: var(--bg-soft); padding: 14px; border: 1px solid var(--border-gray); margin-bottom: 14px;">
+                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 8px;">Modalidade de Recebimento *</label>
+                        
+                        <div class="form-row-2" style="margin-bottom: 10px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; background: var(--bg-main); padding: 10px; border: 1px solid var(--border-gray);">
+                                <input type="radio" name="adm_tipo_entrega" value="retirada" checked onchange="alternarLogisticaADM()">
+                                <span>Retirada na Loja</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; background: var(--bg-main); padding: 10px; border: 1px solid var(--border-gray);">
+                                <input type="radio" name="adm_tipo_entrega" value="entrega" onchange="alternarLogisticaADM()">
+                                <span>Enviar para Endereço</span>
+                            </label>
+                        </div>
+
+                        <div id="adm-box-retirada" class="form-group">
+                            <label style="font-size: 11px;">Dia previsto para retirada na loja *</label>
+                            <input type="date" id="ped-data-retirada" required style="background: var(--bg-main);">
+                        </div>
+
+                        <div id="adm-box-endereco" class="form-group" style="display: none;">
+                            <label style="font-size: 11px;">Endereço Completo de Entrega (Rua, Nº, Bairro, Cidade/UF, CEP) *</label>
+                            <input type="text" id="ped-endereco" placeholder="Ex: Rua Coronel Moreira César, 120, Icaraí, Niterói - RJ, CEP 24230-060" style="background: var(--bg-main);">
+                            <span style="font-size: 11px; color: #888; margin-top: 4px;">* Cotação automática de Correios/Transportadora será vinculada a este endereço.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label>Produto / Descrição do Pedido *</label>
+                        <select id="ped-produto-select" onchange="preencherValorProdutoPedido()" style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit;">
+                            <option value="">-- Selecione um produto do catálogo --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row-2" style="margin-bottom: 14px;">
+                        <div class="form-group">
+                            <label>Quantidade (Rolos / Barras / Placas) *</label>
+                            <input type="number" id="ped-qtd" min="1" value="1" oninput="recalcularTotalPedidoADM()" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Valor Total do Pedido (R$) *</label>
+                            <input type="number" id="ped-valor-total" step="0.01" placeholder="189.90" oninput="recalcularTotalPedidoADM()" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="margin-bottom: 14px;">
+                        <div class="form-group">
+                            <label>Vendedor Responsável *</label>
+                            <select id="ped-vendedor-select" onchange="recalcularTotalPedidoADM()" style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit;">
+                                <option value="">Venda Direta (Sem comissão)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Forma de Pagamento</label>
+                            <select id="ped-pagamento" style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit;">
+                                <option value="Pix">Pix</option>
+                                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                                <option value="Cartão de Débito">Cartão de Débito</option>
+                                <option value="Dinheiro / Transferência">Dinheiro / Transferência</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Prévia automática da Comissão -->
+                    <div id="previa-comissao-box" style="background: var(--bg-soft); border: 1px solid var(--border-gray); padding: 14px; margin-bottom: 20px; font-size: 13px;">
+                        Comissão gerada neste pedido: <strong style="color: var(--accent-gold);">R$ 0,00 (0%)</strong>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 16px;">Registrar Pedido e Gerar Comissão</button>
+                </form>
+
+                <!-- Histórico e Gestão de Status dos Pedidos -->
+                <aside class="checkout-summary-box">
+                    <h3>Pedidos Registrados (<span id="total-pedidos-count">0</span>)</h3>
+                    <p style="font-size: 12px; color: #777; margin-bottom: 12px;">Altere o andamento de cada pedido ou cancele com estorno automático de estoque.</p>
+
+                    <!-- Resumo Financeiro dos Pedidos Ativos -->
+                    <div style="display: flex; justify-content: space-between; background: var(--bg-main); border: 1px solid var(--border-gray); padding: 10px 12px; margin-bottom: 14px; font-size: 12px;">
+                        <span>Faturamento Ativo: <strong id="adm-faturamento-ativo">R$ 0,00</strong></span>
+                        <span>Comissões Ativas: <strong id="adm-comissoes-ativas" style="color: var(--accent-gold);">R$ 0,00</strong></span>
+                    </div>
+
+                    <div id="lista-pedidos-adm" style="display: flex; flex-direction: column; gap: 12px; max-height: 750px; overflow-y: auto;"></div>
+                </aside>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script src="js/app.js"></script>
+    <script>
+        // 1. Controle de Acesso: apenas 'admin' entra aqui
+        const usuarioAtual = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
+        if (!usuarioAtual || usuarioAtual.perfil !== 'admin') {
+            window.location.href = 'login.html';
+        }
+
+        const isAdmin = Boolean(usuarioAtual && usuarioAtual.perfil === 'admin');
+
+        if (usuarioAtual) {
+            document.getElementById('usuario-logado-badge').innerText = `${usuarioAtual.nome} (Admin)`;
+        }
+
+        // Alternância entre as 3 Abas do ADM
+        function alternarAbaPainel(aba) {
+            const secoes = ['catalogo', 'vendedores', 'pedidos'];
+            secoes.forEach(s => {
+                const secEl = document.getElementById(`secao-aba-${s}`);
+                const btnEl = document.getElementById(`btn-aba-${s}`);
+                if (secEl) secEl.style.display = (s === aba) ? 'block' : 'none';
+                if (btnEl) btnEl.classList.toggle('active', s === aba);
+            });
+
+            if (aba === 'pedidos') {
+                popularSelectsPedido();
+                renderListaPedidos();
+            } else if (aba === 'vendedores') {
+                renderListaEquipe();
+            }
+        }
+
+        function alternarLogisticaADM() {
+            const tipo = document.querySelector('input[name="adm_tipo_entrega"]:checked').value;
+            const boxRet = document.getElementById('adm-box-retirada');
+            const boxEnd = document.getElementById('adm-box-endereco');
+            const inputData = document.getElementById('ped-data-retirada');
+            const inputEnd = document.getElementById('ped-endereco');
+
+            if (tipo === 'retirada') {
+                boxRet.style.display = 'block';
+                boxEnd.style.display = 'none';
+                inputData.required = true;
+                inputEnd.required = false;
+            } else {
+                boxRet.style.display = 'none';
+                boxEnd.style.display = 'block';
+                inputData.required = false;
+                inputEnd.required = true;
+            }
+        }
+
+        function alternarCampoRolo() {
+            const tipo = document.getElementById('adm-tipo-venda').value;
+            const precisaArea = (tipo === 'rolo' || tipo === 'barra' || tipo === 'placa');
+            document.getElementById('campo-cobertura-rolo').style.display = precisaArea ? 'block' : 'none';
+        }
+
+        function adicionarLinhaSpec() {
+            const container = document.getElementById('specs-inputs-list');
+            const row = document.createElement('div');
+            row.className = 'form-row-2';
+            row.innerHTML = `
+                <input type="text" class="spec-key" placeholder="Nome (ex: Material)">
+                <input type="text" class="spec-val" placeholder="Valor (ex: WPC)">
+            `;
+            container.appendChild(row);
+        }
+
+        function converterImagemBase64(inputFile, targetInputId) {
+            const file = inputFile.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(targetInputId).value = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Salvar Novo Produto (Aba 1)
+        function salvarNovoProdutoADM(event) {
+            event.preventDefault();
+            if (!isAdmin) return;
+
+            const nome = document.getElementById('adm-nome').value.trim();
+            const preco = parseFloat(document.getElementById('adm-preco').value);
+            const precoAntigo = parseFloat(document.getElementById('adm-preco-antigo').value) || (preco * 1.15);
+
+            const f1 = document.getElementById('img-url-1').value.trim();
+            const f2 = document.getElementById('img-url-2').value.trim() || f1;
+            const f3 = document.getElementById('img-url-3').value.trim() || f1;
+            const imagens = [f1, f2, f3].filter(Boolean);
+
+            const fichaTecnica = {};
+            const keys = document.querySelectorAll('.spec-key');
+            const vals = document.querySelectorAll('.spec-val');
+            keys.forEach((k, idx) => {
+                const chave = k.value.trim();
+                const valor = vals[idx].value.trim();
+                if (chave && valor) fichaTecnica[chave] = valor;
+            });
+
+            const novoProduto = {
+                id: 'prod-' + Date.now(),
+                nome: nome,
+                linha: document.getElementById('adm-linha').value,
+                categoria: document.getElementById('adm-categoria').value.trim(),
+                subcategoria: document.getElementById('adm-subcategoria').value.trim(),
+                preco: preco,
+                precoAntigo: precoAntigo,
+                tipoVenda: document.getElementById('adm-tipo-venda').value,
+                coberturaRolo: parseFloat(document.getElementById('adm-cobertura').value) || 4.3,
+                estoque: parseInt(document.getElementById('adm-estoque').value) || 0,
+                imagemPrincipal: imagens[0] || "",
+                imagens: imagens,
+                descricao: document.getElementById('adm-descricao').value.trim(),
+                fichaTecnica: fichaTecnica,
+                destaque: document.getElementById('adm-destaque').checked
+            };
+
+            const catalogo = getCatalogo();
+            catalogo.unshift(novoProduto);
+            saveCatalogo(catalogo);
+
+            alert(`Produto "${nome}" cadastrado com sucesso!`);
+            event.target.reset();
+            renderListaADM();
+        }
+
+        function excluirProdutoADM(id) {
+            if (!isAdmin) return;
+            if (!confirm('Deseja remover este produto do catálogo?')) return;
+            const catalogo = getCatalogo().filter(p => p.id !== id);
+            saveCatalogo(catalogo);
+            renderListaADM();
+        }
+
+        // Edição Rápida (Valor, Estoque e Metragem)
+        function alternarPainelEdicaoRapida(id) {
+            const box = document.getElementById(`edit-box-${id}`);
+            if (!box) return;
+            box.style.display = (box.style.display === 'none') ? 'block' : 'none';
+        }
+
+        function salvarEdicaoRapidaProduto(id) {
+            if (!isAdmin) return;
+            const catalogo = getCatalogo();
+            const index = catalogo.findIndex(p => p.id === id);
+            if (index === -1) return;
+
+            const novoPreco = parseFloat(document.getElementById(`edit-preco-${id}`).value);
+            const novoEstoque = parseInt(document.getElementById(`edit-estoque-${id}`).value);
+            const novaMetragem = parseFloat(document.getElementById(`edit-metragem-${id}`).value);
+
+            if (!isNaN(novoPreco) && novoPreco >= 0) {
+                catalogo[index].preco = novoPreco;
+            }
+            if (!isNaN(novoEstoque) && novoEstoque >= 0) {
+                catalogo[index].estoque = novoEstoque;
+            }
+            if (!isNaN(novaMetragem) && novaMetragem > 0) {
+                catalogo[index].coberturaRolo = novaMetragem;
+            }
+
+            saveCatalogo(catalogo);
+            renderListaADM();
+        }
+
+        // Lista Compacta do Catálogo Completo
+        function renderListaADM() {
+            const listaEl = document.getElementById('adm-lista-produtos');
+            const countEl = document.getElementById('adm-total-count');
+            const catalogo = getCatalogo();
+
+            if (countEl) countEl.innerText = catalogo.length;
+
+            listaEl.innerHTML = catalogo.map(p => {
+                const thumb = p.imagemPrincipal || (p.imagens && p.imagens[0]) || '';
+                const saldo = Number(p.estoque ?? 0);
+                const corSaldo = saldo === 0 ? '#b54b4b' : (saldo <= 5 ? '#c47f17' : '#2e7d32');
+
+                return `
+                    <div style="background: var(--bg-main); padding: 12px; border: 1px solid var(--border-gray);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                            
+                            <!-- Esquerda: Foto + Categoria + Nome -->
+                            <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                                ${thumb ? `<img src="${thumb}" style="width: 48px; height: 48px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border-gray);">` : ''}
+                                <div style="min-width: 0;">
+                                    <span style="font-size: 10px; text-transform: uppercase; color: var(--accent-gold); font-weight: 600; display: block;">
+                                        ${p.linha.toUpperCase()} &bull; ${p.categoria} &bull; ${p.subcategoria}
+                                    </span>
+                                    <strong style="font-size: 13px; display: block; line-height: 1.3; margin: 2px 0;">${p.nome}</strong>
+                                    <span style="font-size: 11px; color: #666;">
+                                        R$ ${Number(p.preco).toFixed(2).replace('.', ',')} &bull; 
+                                        <span style="color: ${corSaldo}; font-weight: 600;">${saldo} un.</span> &bull; 
+                                        ${p.coberturaRolo || 0} m²
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Direita: Botões empilhados (Editar, Ver na Loja, Excluir) -->
+                            <div style="display: flex; flex-direction: column; gap: 5px; align-items: stretch; flex-shrink: 0; width: 92px;">
+                                <button type="button" class="btn-primary" style="padding: 5px 8px; font-size: 10px; border: none; cursor: pointer; text-align: center;" onclick="alternarPainelEdicaoRapida('${p.id}')">Editar</button>
+                                <button type="button" class="btn-outline" style="padding: 5px 8px; font-size: 10px; text-align: center;" onclick="abrirProdutoPorId('${p.id}')">Ver na Loja</button>
+                                <button type="button" onclick="excluirProdutoADM('${p.id}')" style="background: none; border: none; color: #b54b4b; font-size: 10px; cursor: pointer; text-decoration: underline; margin-top: 2px; text-align: center;">Excluir</button>
+                            </div>
+                        </div>
+
+                        <!-- Gaveta de Edição Rápida (Abre ao clicar em Editar) -->
+                        <div id="edit-box-${p.id}" style="display: none; margin-top: 10px; border-top: 1px dashed var(--border-gray); background: var(--bg-soft); padding: 10px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                <div>
+                                    <label style="font-size: 10px; font-weight: 600; display: block; margin-bottom: 3px;">Valor (R$)</label>
+                                    <input type="number" id="edit-preco-${p.id}" step="0.01" value="${Number(p.preco).toFixed(2)}" style="width: 100%; padding: 6px; border: 1px solid var(--border-gray); font-size: 12px;">
+                                </div>
+                                <div>
+                                    <label style="font-size: 10px; font-weight: 600; display: block; margin-bottom: 3px;">Estoque (un.)</label>
+                                    <input type="number" id="edit-estoque-${p.id}" min="0" value="${saldo}" style="width: 100%; padding: 6px; border: 1px solid var(--border-gray); font-size: 12px;">
+                                </div>
+                                <div>
+                                    <label style="font-size: 10px; font-weight: 600; display: block; margin-bottom: 3px;">Metragem (m²)</label>
+                                    <input type="number" id="edit-metragem-${p.id}" step="0.001" value="${p.coberturaRolo || 4.3}" style="width: 100%; padding: 6px; border: 1px solid var(--border-gray); font-size: 12px;">
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                <button type="button" class="btn-outline" style="padding: 5px 10px; font-size: 11px;" onclick="alternarPainelEdicaoRapida('${p.id}')">Cancelar</button>
+                                <button type="button" class="btn-primary" style="padding: 5px 12px; font-size: 11px; border: none; cursor: pointer;" onclick="salvarEdicaoRapidaProduto('${p.id}')">Salvar Alterações</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Salvar Novo Vendedor com CPF e Comissão % (Aba 2)
+        function salvarNovoVendedorADM(event) {
+            event.preventDefault();
+            if (!isAdmin) return;
+
+            const dados = {
+                nome: document.getElementById('vend-nome').value,
+                cpf: document.getElementById('vend-cpf').value,
+                comissao: document.getElementById('vend-comissao').value,
+                email: document.getElementById('vend-email').value,
+                senha: document.getElementById('vend-senha').value
+            };
+
+            const res = cadastrarUsuarioEquipe(dados);
+            if (res.erro) {
+                alert(res.erro);
+                return;
+            }
+
+            alert(`Vendedor(a) ${dados.nome} cadastrado com ${dados.comissao}% de comissão!`);
+            event.target.reset();
+            renderListaEquipe();
+        }
+
+        function excluirVendedor(email) {
+            if (!isAdmin) return;
+            if (!confirm(`Remover o acesso de ${email}?`)) return;
+            removerMembroEquipe(email);
+            renderListaEquipe();
+        }
+
+        function renderListaEquipe() {
+            const container = document.getElementById('lista-equipe-adm');
+            if (!container || typeof getEquipeCadastrada !== 'function') return;
+            const equipe = getEquipeCadastrada();
+            const pedidos = typeof getPedidosRegistrados === 'function' ? getPedidosRegistrados() : [];
+
+            if (equipe.length === 0) {
+                container.innerHTML = '<p style="font-size: 13px; color: #888;">Nenhum vendedor cadastrado ainda.</p>';
+                return;
+            }
+
+            container.innerHTML = equipe.map(v => {
+                const vendasVendedor = pedidos.filter(p => p.vendedorEmail === v.email && p.status !== 'Cancelado');
+                const totalVendido = vendasVendedor.reduce((acc, p) => acc + Number(p.valorTotal), 0);
+                const totalComissao = vendasVendedor.reduce((acc, p) => acc + Number(p.valorComissao), 0);
+
+                return `
+                    <div style="background: var(--bg-main); padding: 14px; border: 1px solid var(--border-gray); font-size: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <strong style="font-size: 14px; display: block;">${v.nome}</strong>
+                                <span style="color: #666; display: block; margin-top: 2px;">CPF: ${v.cpf || 'Não informado'} &bull; Comissão: <strong style="color: var(--accent-gold);">${v.comissao}%</strong></span>
+                                <span style="color: #666; display: block; margin-top: 2px;">Login: ${v.email} &bull; Senha: <code>${v.senha}</code></span>
+                            </div>
+                            <button type="button" onclick="excluirVendedor('${v.email}')" style="background: none; border: none; color: #b54b4b; font-size: 11px; cursor: pointer; text-decoration: underline;">Excluir</button>
+                        </div>
+                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-gray); display: flex; justify-content: space-between;">
+                            <span>Vendas (${vendasVendedor.length}): <strong>R$ ${totalVendido.toFixed(2).replace('.', ',')}</strong></span>
+                            <span style="color: var(--accent-gold); font-weight: 600;">A Pagar: R$ ${totalComissao.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Funções da Aba 3: Cadastrar Pedido & Gerar Comissão
+        function popularSelectsPedido() {
+            const selectProd = document.getElementById('ped-produto-select');
+            const selectVend = document.getElementById('ped-vendedor-select');
+            const catalogo = getCatalogo();
+            const equipe = typeof getEquipeCadastrada === 'function' ? getEquipeCadastrada() : [];
+
+            selectProd.innerHTML = `<option value="">-- Selecione um produto do catálogo --</option>` + catalogo.map(p => {
+                const saldo = Number(p.estoque ?? 0);
+                return `<option value="${p.id}" data-preco="${p.preco}" data-estoque="${saldo}" ${saldo === 0 ? 'disabled' : ''}>
+                    ${p.nome} — R$ ${Number(p.preco).toFixed(2).replace('.', ',')} (${saldo === 0 ? 'ESGOTADO' : saldo + ' em estoque'})
+                </option>`;
+            }).join('');
+
+            selectVend.innerHTML = `<option value="">Venda Direta (Sem comissão)</option>` + equipe.map(v => 
+                `<option value="${v.email}" data-nome="${v.nome}" data-comissao="${v.comissao}">${v.nome} (${v.comissao}% de comissão)</option>`
+            ).join('');
+        }
+
+        function preencherValorProdutoPedido() {
+            const selectProd = document.getElementById('ped-produto-select');
+            const option = selectProd.options[selectProd.selectedIndex];
+            const precoUnit = parseFloat(option?.dataset?.preco) || 0;
+            const qtd = parseInt(document.getElementById('ped-qtd').value) || 1;
+
+            if (precoUnit > 0) {
+                document.getElementById('ped-valor-total').value = (precoUnit * qtd).toFixed(2);
+            }
+            recalcularTotalPedidoADM();
+        }
+
+        function recalcularTotalPedidoADM() {
+            const selectProd = document.getElementById('ped-produto-select');
+            const optionProd = selectProd.options[selectProd.selectedIndex];
+            const precoUnit = parseFloat(optionProd?.dataset?.preco) || 0;
+            const qtd = parseInt(document.getElementById('ped-qtd').value) || 1;
+
+            if (precoUnit > 0 && document.activeElement && document.activeElement.id === 'ped-qtd') {
+                document.getElementById('ped-valor-total').value = (precoUnit * qtd).toFixed(2);
+            }
+
+            const valorTotal = parseFloat(document.getElementById('ped-valor-total').value) || 0;
+            const selectVend = document.getElementById('ped-vendedor-select');
+            const optionVend = selectVend.options[selectVend.selectedIndex];
+            const percComissao = parseFloat(optionVend?.dataset?.comissao) || 0;
+            const valorComissao = (valorTotal * percComissao) / 100;
+
+            document.getElementById('previa-comissao-box').innerHTML = `
+                Comissão gerada neste pedido: <strong style="color: var(--accent-gold);">R$ ${valorComissao.toFixed(2).replace('.', ',')} (${percComissao}%)</strong>
+            `;
+        }
+
+        function salvarNovoPedidoADM(event) {
+            event.preventDefault();
+            if (!isAdmin) return;
+
+            const selectProd = document.getElementById('ped-produto-select');
+            const produtoIdSelecionado = selectProd.value;
+            const nomeProduto = selectProd.options[selectProd.selectedIndex]?.text || "Item Avulso";
+            const qtd = parseInt(document.getElementById('ped-qtd').value) || 1;
+            const valorTotal = parseFloat(document.getElementById('ped-valor-total').value) || 0;
+
+            const tipoEntrega = document.querySelector('input[name="adm_tipo_entrega"]:checked').value;
+            let infoLogistica = '';
+            if (tipoEntrega === 'retirada') {
+                const dataRaw = document.getElementById('ped-data-retirada').value;
+                const dataFormatada = dataRaw ? dataRaw.split('-').reverse().join('/') : 'A combinar';
+                infoLogistica = `Retirada na Loja (Dia: ${dataFormatada})`;
+            } else {
+                const enderecoCliente = document.getElementById('ped-endereco').value.trim();
+                infoLogistica = `Envio p/ Endereço: ${enderecoCliente}`;
+            }
+
+            const selectVend = document.getElementById('ped-vendedor-select');
+            const optionVend = selectVend.options[selectVend.selectedIndex];
+            const vendedorEmail = selectVend.value;
+            const vendedorNome = optionVend?.dataset?.nome || "Venda Direta";
+            const percComissao = parseFloat(optionVend?.dataset?.comissao) || 0;
+            const valorComissao = (valorTotal * percComissao) / 100;
+
+            const novoPedido = {
+                id: 'PED-' + Math.floor(1000 + Math.random() * 9000),
+                data: new Date().toLocaleDateString('pt-BR'),
+                status: 'Confirmado',
+                produtoId: produtoIdSelecionado,
+                qtdPecas: qtd,
+                cliente: document.getElementById('ped-cliente').value.trim(),
+                telefone: document.getElementById('ped-telefone').value.trim(),
+                itemResumo: `${qtd}x ${nomeProduto} • ${infoLogistica}`,
+                valorTotal: valorTotal,
+                pagamento: document.getElementById('ped-pagamento').value,
+                vendedorEmail: vendedorEmail,
+                vendedorNome: vendedorNome,
+                percComissao: percComissao,
+                valorComissao: valorComissao
+            };
+
+            if (typeof salvarPedidoSistema === 'function') {
+                salvarPedidoSistema(novoPedido);
+            }
+
+            if (produtoIdSelecionado && typeof darBaixaEstoque === 'function') {
+                darBaixaEstoque(produtoIdSelecionado, qtd);
+                renderListaADM();
+            }
+
+            alert(`Pedido ${novoPedido.id} registrado com sucesso!\nComissão gerada: R$ ${valorComissao.toFixed(2).replace('.', ',')}`);
+            event.target.reset();
+            alternarLogisticaADM();
+            recalcularTotalPedidoADM();
+            popularSelectsPedido();
+            renderListaPedidos();
+        }
+
+        // Alterar Status do Pedido + Estorno Automático se Cancelado
+        function alterarStatusPedidoADM(pedidoId, novoStatus) {
+            if (!isAdmin) return;
+            const pedidos = getPedidosRegistrados();
+            const idx = pedidos.findIndex(p => p.id === pedidoId);
+            if (idx === -1) return;
+
+            const statusAnterior = pedidos[idx].status || 'Confirmado';
+
+            if (novoStatus === 'Cancelado' && statusAnterior !== 'Cancelado') {
+                if (!confirm(`Confirmar o cancelamento do pedido ${pedidoId}?`)) {
+                    renderListaPedidos();
+                    return;
+                }
+
+                // Se o pedido tiver produto vinculado, pergunta se deve estornar o estoque
+                if (pedidos[idx].produtoId && pedidos[idx].qtdPecas) {
+                    if (confirm(`Deseja devolver ${pedidos[idx].qtdPecas} unidade(s) deste item ao estoque?`)) {
+                        const cat = getCatalogo();
+                        const prodIdx = cat.findIndex(item => item.id === pedidos[idx].produtoId);
+                        if (prodIdx !== -1) {
+                            cat[prodIdx].estoque = Number(cat[prodIdx].estoque || 0) + Number(pedidos[idx].qtdPecas);
+                            saveCatalogo(cat);
+                            renderListaADM();
+                        }
+                    }
+                }
+            }
+
+            pedidos[idx].status = novoStatus;
+            localStorage.setItem('acsaPedidos', JSON.stringify(pedidos));
+            renderListaPedidos();
+            renderListaEquipe();
+        }
+
+        function excluirPedidoADM(pedidoId) {
+            if (!isAdmin) return;
+            if (!confirm(`Excluir permanentemente o registro do pedido ${pedidoId}?`)) return;
+            const pedidos = getPedidosRegistrados().filter(p => p.id !== pedidoId);
+            localStorage.setItem('acsaPedidos', JSON.stringify(pedidos));
+            renderListaPedidos();
+            renderListaEquipe();
+        }
+
+        function renderListaPedidos() {
+            const listaEl = document.getElementById('lista-pedidos-adm');
+            const countEl = document.getElementById('total-pedidos-count');
+            const fatEl = document.getElementById('adm-faturamento-ativo');
+            const comEl = document.getElementById('adm-comissoes-ativas');
+            const pedidos = typeof getPedidosRegistrados === 'function' ? getPedidosRegistrados() : [];
+
+            if (countEl) countEl.innerText = pedidos.length;
+
+            const ativos = pedidos.filter(p => p.status !== 'Cancelado');
+            const faturamentoTotal = ativos.reduce((acc, p) => acc + Number(p.valorTotal || 0), 0);
+            const comissoesTotal = ativos.reduce((acc, p) => acc + Number(p.valorComissao || 0), 0);
+
+            if (fatEl) fatEl.innerText = 'R$ ' + faturamentoTotal.toFixed(2).replace('.', ',');
+            if (comEl) comEl.innerText = 'R$ ' + comissoesTotal.toFixed(2).replace('.', ',');
+
+            if (pedidos.length === 0) {
+                listaEl.innerHTML = '<p style="font-size: 13px; color: #888;">Nenhum pedido registrado ainda.</p>';
+                return;
+            }
+
+            const opcoesStatus = [
+                'Aguardando Pagamento',
+                'Confirmado',
+                'Em Separação',
+                'Enviado / Pronto p/ Retirada',
+                'Concluído',
+                'Cancelado'
+            ];
+
+            listaEl.innerHTML = pedidos.map(p => {
+                const statusAtual = p.status || 'Confirmado';
+                const isCancelado = statusAtual === 'Cancelado';
+                const corBorda = isCancelado ? '#b54b4b' : (statusAtual === 'Concluído' ? '#2e7d32' : 'var(--border-gray)');
+
+                const selectOptionsHTML = opcoesStatus.map(st => 
+                    `<option value="${st}" ${st === statusAtual ? 'selected' : ''}>${st}</option>`
+                ).join('');
+
+                return `
+                    <div style="background: var(--bg-main); padding: 14px; border: 1px solid ${corBorda}; font-size: 12px; ${isCancelado ? 'opacity: 0.72;' : ''}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <strong>${p.id} &bull; ${p.cliente} ${p.telefone ? '(' + p.telefone + ')' : ''}</strong>
+                            <span style="color: #888;">${p.data}</span>
+                        </div>
+                        <p style="color: #555; margin-bottom: 10px;">${p.itemResumo}</p>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px dashed var(--border-gray);">
+                            <label style="font-size: 11px; color: #666;">Status:
+                                <select onchange="alterarStatusPedidoADM('${p.id}', this.value)" style="margin-left: 4px; padding: 4px 8px; border: 1px solid var(--border-gray); font-family: inherit; font-size: 11px; font-weight: 600; background: var(--bg-soft);">
+                                    ${selectOptionsHTML}
+                                </select>
+                            </label>
+                            <button type="button" onclick="excluirPedidoADM('${p.id}')" style="background: none; border: none; color: #b54b4b; font-size: 11px; cursor: pointer; text-decoration: underline;">Excluir</button>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Total: <strong>R$ ${Number(p.valorTotal).toFixed(2).replace('.', ',')}</strong> (${p.pagamento})</span>
+                            <span style="color: ${isCancelado ? '#888' : 'var(--accent-gold)'}; font-weight: 600;">
+                                ${isCancelado ? 'Comissão cancelada' : `${p.vendedorNome}: R$ ${Number(p.valorComissao).toFixed(2).replace('.', ',')} (${p.percComissao}%)`}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderListaADM();
+            renderListaEquipe();
+        });
+    </script>
+</body>
+</html>

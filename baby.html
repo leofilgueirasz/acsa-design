@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acsa Baby | Papéis de Parede e Decoração Infantil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <span>LINHA ACSA BABY • ACABAMENTO ATÓXICO E LAVÁVEL • 5% OFF NO PIX</span>
+    </div>
+
+    <div id="search-overlay" class="search-overlay">
+        <form class="search-container" onsubmit="executeSearch(event)">
+            <input type="text" id="global-search-input" placeholder="Buscar na Acsa Baby: Nuvens, Safári, Poá..." required>
+            <button type="submit" class="btn-primary" style="border:none; cursor:pointer; padding: 10px 24px;">Buscar</button>
+            <button type="button" class="close-search" onclick="toggleSearch()">&times;</button>
+        </form>
+    </div>
+
+    <header class="header">
+        <div class="container header-content">
+            <nav class="nav-links">
+                <a href="index.html">Início</a>
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html" class="active">Acsa Baby</a>
+                <a href="marca.html">A Marca</a>
+            </nav>
+
+            <a href="index.html" class="brand-logo">
+                <img src="logo-acsa.png" alt="Acsa Design">
+            </a>
+
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleSearch()">Buscar</button>
+                <a href="login.html" class="icon-btn" style="text-decoration: none;">Entrar</a>
+                <button class="icon-btn" onclick="toggleCart()">Sacola (<span id="cart-count">0</span>)</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Banner Editorial Acsa Baby -->
+    <section style="background: var(--bg-soft); border-bottom: 1px solid var(--border-gray); padding: 56px 0;">
+        <div class="container" style="text-align: center; max-width: 720px;">
+            <span class="subtitle">UNIVERSO INFANTIL</span>
+            <h1 style="font-size: 38px; margin-bottom: 14px;">Acsa Baby</h1>
+            <p style="font-size: 15px; color: #666; font-weight: 300; line-height: 1.7;">
+                Revestimentos vinílicos laváveis, sem odor e com estampas em aquarela pensadas para acolher cada fase da infância com suavidade e segurança.
+            </p>
+        </div>
+    </section>
+
+    <!-- Barra de Filtros por Categoria / Tema -->
+    <main class="container" style="padding: 40px 24px 80px 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 32px; border-bottom: 1px solid var(--border-gray); padding-bottom: 16px;">
+            <div id="baby-filtros-bar" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" class="cat-btn active" onclick="filtrarProdutosBaby('todos', this)">Todos os Itens</button>
+            </div>
+            <span id="baby-contador-itens" style="font-size: 13px; color: #777;">0 produtos</span>
+        </div>
+
+        <!-- Vitrine de Produtos Acsa Baby -->
+        <div id="baby-products-grid" class="product-grid"></div>
+    </main>
+
+    <!-- Diferenciais Técnicos da Linha Infantil -->
+    <section style="background: var(--bg-soft); border-top: 1px solid var(--border-gray); padding: 56px 0;">
+        <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px;">
+            <div style="background: var(--bg-main); padding: 24px; border: 1px solid var(--border-gray);">
+                <span class="subtitle">SEGURANÇA</span>
+                <h3 style="font-size: 18px; margin-bottom: 8px;">100% Sem Odor e Atóxico</h3>
+                <p style="font-size: 13px; color: #666; font-weight: 300;">Impressão ecológica livre de solventes pesados, permitindo o uso do quarto no mesmo dia da aplicação.</p>
+            </div>
+            <div style="background: var(--bg-main); padding: 24px; border: 1px solid var(--border-gray);">
+                <span class="subtitle">PRATICIDADE</span>
+                <h3 style="font-size: 18px; margin-bottom: 8px;">Superfície Vinílica Lavável</h3>
+                <p style="font-size: 13px; color: #666; font-weight: 300;">Fácil higienização com pano úmido e sabão neutro, acompanhando o crescimento e as brincadeiras.</p>
+            </div>
+            <div style="background: var(--bg-main); padding: 24px; border: 1px solid var(--border-gray);">
+                <span class="subtitle">SOB MEDIDA</span>
+                <h3 style="font-size: 18px; margin-bottom: 8px;">Cálculo Exato por Parede</h3>
+                <p style="font-size: 13px; color: #666; font-weight: 300;">Informe a largura e altura da parede na página do produto e saiba na hora quantos rolos são necessários.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo">ACSA <span>DESIGN</span></div>
+                <p>Home • Baby</p>
+            </div>
+            <div class="footer-links">
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="marca.html">A Marca</a>
+                <a href="login.html">Minha Conta</a>
+            </div>
+            <div class="footer-copy">
+                <p>&copy; 2026 Acsa Design. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Gaveta da Sacola -->
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Sua Sacola</h3>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        <div id="cart-items" class="cart-items">
+            <p class="empty-cart-msg">Sua sacola está vazia.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal">R$ 0,00</span>
+            </div>
+            <a href="checkout.html" class="btn-primary" style="width: 100%; text-align: center; display: block;">Finalizar Compra</a>
+        </div>
+    </div>
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let filtroBabyAtual = 'todos';
+
+        function getProdutosLinhaBaby() {
+            return getCatalogo().filter(p => (p.linha || '').toLowerCase() === 'baby');
+        }
+
+        function montarBotoesFiltroBaby() {
+            const produtosBaby = getProdutosLinhaBaby();
+            const bar = document.getElementById('baby-filtros-bar');
+            const subcategorias = [...new Set(produtosBaby.map(p => p.subcategoria).filter(Boolean))];
+
+            bar.innerHTML = `<button type="button" class="cat-btn active" onclick="filtrarProdutosBaby('todos', this)">Todos os Itens</button>` +
+                subcategorias.map(sub => `
+                    <button type="button" class="cat-btn" onclick="filtrarProdutosBaby('${sub}', this)">${sub}</button>
+                `).join('');
+        }
+
+        function filtrarProdutosBaby(subcategoria, btnEl) {
+            filtroBabyAtual = subcategoria;
+            if (btnEl) {
+                document.querySelectorAll('#baby-filtros-bar .cat-btn').forEach(b => b.classList.remove('active'));
+                btnEl.classList.add('active');
+            }
+            renderVitrineBaby();
+        }
+
+        function renderVitrineBaby() {
+            const grid = document.getElementById('baby-products-grid');
+            const contador = document.getElementById('baby-contador-itens');
+            let lista = getProdutosLinhaBaby();
+
+            if (filtroBabyAtual !== 'todos') {
+                lista = lista.filter(p => p.subcategoria === filtroBabyAtual);
+            }
+
+            contador.innerText = `${lista.length} ${lista.length === 1 ? 'produto' : 'produtos'}`;
+
+            if (lista.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; color: #888; padding: 48px 0;">Nenhum item encontrado nesta categoria da linha Acsa Baby.</p>`;
+                return;
+            }
+
+            grid.innerHTML = lista.map(p => criarCardProdutoHTML(p)).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            montarBotoesFiltroBaby();
+            renderVitrineBaby();
+        });
+    </script>
+</body>
+</html>

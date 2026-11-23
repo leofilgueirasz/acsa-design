@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Marca & Parceiros | Acsa Design</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <span>CURADORIA EM REVESTIMENTOS • ENVIO PARA TODO O BRASIL • PROGRAMA PARA ARQUITETOS</span>
+    </div>
+
+    <div id="search-overlay" class="search-overlay">
+        <form class="search-container" onsubmit="executeSearch(event)">
+            <input type="text" id="global-search-input" placeholder="Buscar papéis de parede, ripados, jardins..." required>
+            <button type="submit" class="btn-primary" style="border:none; cursor:pointer; padding: 10px 24px;">Buscar</button>
+            <button type="button" class="close-search" onclick="toggleSearch()">&times;</button>
+        </form>
+    </div>
+
+    <header class="header">
+        <div class="container header-content">
+            <nav class="nav-links">
+                <a href="index.html">Início</a>
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="marca.html" class="active">A Marca</a>
+            </nav>
+
+            <a href="index.html" class="brand-logo">
+                <img src="logo-acsa.png" alt="Acsa Design">
+            </a>
+
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleSearch()">Buscar</button>
+                <a href="login.html" class="icon-btn" style="text-decoration: none;">Entrar</a>
+                <button class="icon-btn" onclick="toggleCart()">Sacola (<span id="cart-count">0</span>)</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Institucional -->
+    <section style="background: var(--bg-soft); border-bottom: 1px solid var(--border-gray); padding: 64px 0;">
+        <div class="container" style="max-width: 780px; text-align: center;">
+            <span class="subtitle">SOBRE A ACSA DESIGN</span>
+            <h1 style="font-size: 38px; margin-bottom: 16px;">Arquitetura de Superfícies com Estética e Praticidade</h1>
+            <p style="font-size: 15px; color: #666; font-weight: 300; line-height: 1.8;">
+                Nascemos com o propósito de transformar paredes e fachadas sem obras demoradas. Reunimos papéis de parede vinílicos de alto relevo, painéis ripados em WPC e jardins verticais com curadoria técnica para projetos residenciais, comerciais e infantis.
+            </p>
+        </div>
+    </section>
+
+    <!-- Os Dois Universos + Pilares -->
+    <main class="container" style="padding: 56px 24px;">
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px; margin-bottom: 64px;">
+            <div style="background: var(--bg-main); border: 1px solid var(--border-gray); padding: 32px;">
+                <span class="subtitle">UNIVERSO 01</span>
+                <h2 style="font-size: 24px; margin-bottom: 12px;">Acsa Home</h2>
+                <p style="font-size: 14px; color: #666; font-weight: 300; line-height: 1.7; margin-bottom: 20px;">
+                    Coleções importadas de papéis vinílicos laváveis, painéis ripados internos e externos em WPC e placas de jardim vertical que valorizam salas, painéis de TV, varandas e espaços corporativos.
+                </p>
+                <a href="home.html" class="btn-outline">Explorar Acsa Home</a>
+            </div>
+
+            <div style="background: var(--bg-main); border: 1px solid var(--border-gray); padding: 32px;">
+                <span class="subtitle">UNIVERSO 02</span>
+                <h2 style="font-size: 24px; margin-bottom: 12px;">Acsa Baby</h2>
+                <p style="font-size: 14px; color: #666; font-weight: 300; line-height: 1.7; margin-bottom: 20px;">
+                    Estampas exclusivas em tons suaves, boiseries flexíveis e acabamentos 100% atóxicos e sem odor, desenvolvidos para acompanhar cada fase do quarto infantil com segurança e acolhimento.
+                </p>
+                <a href="baby.html" class="btn-outline">Explorar Acsa Baby</a>
+            </div>
+        </div>
+
+        <!-- Atendimento Regional & Envio Nacional -->
+        <div style="background: var(--bg-soft); border: 1px solid var(--border-gray); padding: 36px; margin-bottom: 64px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;">
+            <div>
+                <span class="subtitle">SHOWROOM & RETIRADA</span>
+                <h3 style="font-size: 18px; margin-bottom: 8px;">São Gonçalo & Niterói — RJ</h3>
+                <p style="font-size: 13px; color: #666; font-weight: 300; line-height: 1.6;">
+                    Atendimento consultivo para escolha de texturas e cálculo exato de rolos ou barras, com opção de retirada gratuita no ponto físico.
+                </p>
+            </div>
+            <div>
+                <span class="subtitle">LOGÍSTICA NACIONAL</span>
+                <h3 style="font-size: 18px; margin-bottom: 8px;">Entrega em Todo o Brasil</h3>
+                <p style="font-size: 13px; color: #666; font-weight: 300; line-height: 1.6;">
+                    Envio rápido via Correios e transportadoras parceiras (Jadlog, JeT e carga fracionada) com cálculo transparente direto no site.
+                </p>
+            </div>
+            <div>
+                <span class="subtitle">SUPORTE TÉCNICO</span>
+                <h3 style="font-size: 18px; margin-bottom: 8px;">Cálculo Inteligente de Rendimento</h3>
+                <p style="font-size: 13px; color: #666; font-weight: 300; line-height: 1.6;">
+                    Nossa calculadora automática converte a largura e altura da sua parede na quantidade exata de rolos, barras ou placas.
+                </p>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- PROGRAMA DE PARCERIA PARA ARQUITETOS & DESIGNERS           -->
+        <!-- ========================================================== -->
+        <section id="programa-parceiros" class="checkout-grid" style="align-items: start;">
+            <div>
+                <span class="subtitle">ACSA PRO • ESPECIFICADORES</span>
+                <h2 style="font-size: 30px; margin-bottom: 14px;">Programa de Parceria para Arquitetos e Designers</h2>
+                <p style="font-size: 14px; color: #666; font-weight: 300; line-height: 1.8; margin-bottom: 20px;">
+                    Cadastre seu escritório ou perfil profissional gratuitamente para especificar os revestimentos Acsa Design em seus projetos com condições diferenciadas.
+                </p>
+
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--text-dark); margin-bottom: 24px;">
+                    <li style="padding-left: 16px; border-left: 2px solid var(--accent-gold);">
+                        <strong>10% de Desconto Exclusivo:</strong> Acesso imediato ao cupom <code>ACSAPRO10</code> para compras próprias ou repasse aos seus clientes.
+                    </li>
+                    <li style="padding-left: 16px; border-left: 2px solid var(--accent-gold);">
+                        <strong>Amostras & Catálogo Técnico:</strong> Prioridade na reserva de estoque e suporte direto para quantitativo de obras.
+                    </li>
+                    <li style="padding-left: 16px; border-left: 2px solid var(--accent-gold);">
+                        <strong>Painel Exclusivo:</strong> Acompanhe seus pedidos e benefícios diretamente na sua Área do Parceiro.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Formulário de Credenciamento Instantâneo -->
+            <form class="checkout-step-box" onsubmit="cadastrarArquitetoParceiro(event)">
+                <span class="subtitle">CREDENCIAMENTO GRATUITO</span>
+                <h3 style="font-size: 20px; margin-bottom: 16px;">Ativar Conta de Parceiro</h3>
+
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label>Nome Completo ou Escritório *</label>
+                    <input type="text" id="parc-nome" placeholder="Ex: Arq. Juliana Ribeiro" required>
+                </div>
+
+                <div class="form-row-2" style="margin-bottom: 12px;">
+                    <div class="form-group">
+                        <label>CAU / ABD / CPF ou CNPJ *</label>
+                        <input type="text" id="parc-registro" placeholder="Ex: CAU A12345-6" required>
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp *</label>
+                        <input type="tel" id="parc-whats" placeholder="(21) 99999-9999" required>
+                    </div>
+                </div>
+
+                <div class="form-row-2" style="margin-bottom: 18px;">
+                    <div class="form-group">
+                        <label>E-mail Profissional *</label>
+                        <input type="email" id="parc-email" placeholder="juliana@studio.com.br" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Crie uma Senha *</label>
+                        <input type="password" id="parc-senha" placeholder="Mínimo 4 caracteres" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 15px;">
+                    Cadastrar e Liberar Cupom ACSAPRO10
+                </button>
+            </form>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo">ACSA <span>DESIGN</span></div>
+                <p>Home • Baby</p>
+            </div>
+            <div class="footer-links">
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="marca.html">A Marca</a>
+                <a href="login.html">Minha Conta</a>
+            </div>
+            <div class="footer-copy">
+                <p>&copy; 2026 Acsa Design. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Gaveta da Sacola -->
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Sua Sacola</h3>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        <div id="cart-items" class="cart-items">
+            <p class="empty-cart-msg">Sua sacola está vazia.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal">R$ 0,00</span>
+            </div>
+            <a href="checkout.html" class="btn-primary" style="width: 100%; text-align: center; display: block;">Finalizar Compra</a>
+        </div>
+    </div>
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        function cadastrarArquitetoParceiro(event) {
+            event.preventDefault();
+            const nome = document.getElementById('parc-nome').value.trim();
+            const registro = document.getElementById('parc-registro').value.trim();
+            const whats = document.getElementById('parc-whats').value.trim();
+            const email = document.getElementById('parc-email').value.trim();
+            const senha = document.getElementById('parc-senha').value;
+
+            const nomeCompleto = `${nome} (${registro})`;
+            cadastrarNovoCliente(nomeCompleto, email, senha, 'parceiro');
+
+            // Salva dados complementares do parceiro
+            const usuarioAtual = getUsuarioLogado();
+            if (usuarioAtual) {
+                usuarioAtual.registroProfissional = registro;
+                usuarioAtual.whatsapp = whats;
+                localStorage.setItem('acsaUsuarioLogado', JSON.stringify(usuarioAtual));
+            }
+
+            alert(`Credenciamento concluído com sucesso!\nSeu cupom exclusivo de parceiro é: ACSAPRO10 (10% OFF).\n\nRedirecionando para sua Área do Parceiro...`);
+            window.location.href = 'minha-conta.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acsa Home | Decoração & Design</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <span>FRETE GRÁTIS PARA COMPRAS ACIMA DE R$ 299 • 5% OFF NO PIX</span>
+    </div>
+
+    <div id="search-overlay" class="search-overlay">
+        <form class="search-container" onsubmit="executeSearch(event)">
+            <input type="text" id="global-search-input" placeholder="Buscar na linha Acsa Home..." required>
+            <button type="submit" class="btn-primary" style="border:none; cursor:pointer; padding: 10px 24px;">Buscar</button>
+            <button type="button" class="close-search" onclick="toggleSearch()">&times;</button>
+        </form>
+    </div>
+
+    <header class="header">
+        <div class="container header-content">
+            <nav class="nav-links">
+                <a href="index.html">Início</a>
+                <a href="home.html" class="active">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="marca.html">A Marca</a>
+            </nav>
+
+            <a href="index.html" class="brand-logo">
+                <img src="logo-acsa.png" alt="Acsa Design">
+            </a>
+
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleSearch()">Buscar</button>
+                <a href="login.html" class="icon-btn" style="text-decoration: none;">Entrar</a>
+                <button class="icon-btn" onclick="toggleCart()">Sacola (<span id="cart-count">0</span>)</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-banner">
+        <span class="subtitle">UNIVERSO CASA</span>
+        <h1>Acsa Home</h1>
+        <p>Objetos esculturais, revestimentos, cortinas sob medida e texturas naturais para transformar cada ambiente.</p>
+    </section>
+
+    <main class="container" style="padding: 48px 24px 80px 24px;">
+        <!-- Barra de Categorias Principais -->
+        <div class="category-filter-wrapper">
+            <div class="category-bar">
+                <button type="button" class="cat-btn active" data-cat="Todas" onclick="filtrarProdutosPagina('home', 'Todas', null)">Todos os Produtos</button>
+                <button type="button" class="cat-btn" data-cat="Papel de Parede" onclick="filtrarProdutosPagina('home', 'Papel de Parede', null)">Papel de Parede</button>
+                <button type="button" class="cat-btn" data-cat="Painel Ripado" onclick="filtrarProdutosPagina('home', 'Painel Ripado', null)">Painel Ripado</button>
+                <button type="button" class="cat-btn" data-cat="Jardim Artificial" onclick="filtrarProdutosPagina('home', 'Jardim Artificial', null)">Jardim Artificial</button>
+            </div>
+
+            <!-- Barra de Subcategorias (Aparece automaticamente ao escolher uma categoria) -->
+            <div id="subcategory-bar" class="subcategory-bar" style="display: none;"></div>
+        </div>
+
+        <!-- Grade Dinâmica de Produtos -->
+        <div id="dynamic-product-grid" class="product-grid"></div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo">ACSA <span>DESIGN</span></div>
+                <p>Home • Baby</p>
+            </div>
+            <div class="footer-links">
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="marca.html">A Marca</a>
+                <a href="login.html">Minha Conta</a>
+            </div>
+            <div class="footer-copy">
+                <p>&copy; 2026 Acsa Design. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Gaveta da Sacola -->
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Sua Sacola</h3>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        <div id="cart-items" class="cart-items">
+            <p class="empty-cart-msg">Sua sacola está vazia.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal">R$ 0,00</span>
+            </div>
+            <a href="index.html" class="btn-primary" style="width: 100%; text-align: center;">Finalizar Compra</a>
+        </div>
+    </div>
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => filtrarProdutosPagina('home', 'Todas', null));
+    </script>
+</body>
+</html>

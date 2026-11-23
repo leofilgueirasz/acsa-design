@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Vendedor | Acsa Design</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <span>PORTAL DO VENDEDOR • CATÁLOGO TÉCNICO, PEDIDOS E COMISSÕES</span>
+    </div>
+
+    <header class="header">
+        <div class="container header-content">
+            <nav class="nav-links">
+                <a href="index.html">Ver Loja Online</a>
+                <a href="vendedor.html" class="active">Área do Vendedor</a>
+            </nav>
+            <a href="index.html" class="brand-logo">
+                <img src="logo-acsa.png" alt="Acsa Design">
+            </a>
+            <div class="header-actions">
+                <span id="vendedor-header-nome" style="font-size: 12px; color: #777; margin-right: 12px;"></span>
+                <button type="button" class="icon-btn" onclick="sairDaConta()">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 40px 24px 80px 24px;">
+
+        <!-- Cabeçalho de Boas-vindas e Resumo de Comissões -->
+        <div class="checkout-step-box" style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+            <div>
+                <span class="subtitle">ÁREA COMERCIAL ACSA DESIGN</span>
+                <h1 id="vendedor-titulo" style="font-size: 28px; margin-bottom: 6px;">Olá, Vendedor(a)</h1>
+                <p id="vendedor-info-doc" style="font-size: 13px; color: #777;"></p>
+            </div>
+
+            <div style="display: flex; gap: 24px; background: var(--bg-soft); padding: 16px 24px; border: 1px solid var(--border-gray); flex-wrap: wrap;">
+                <div>
+                    <span style="font-size: 11px; text-transform: uppercase; color: #888; display: block;">Sua Comissão Fixa</span>
+                    <strong id="vendedor-taxa-comissao" style="font-size: 18px; color: var(--text-dark);">0%</strong>
+                </div>
+                <div style="border-left: 1px solid var(--border-gray); padding-left: 24px;">
+                    <span style="font-size: 11px; text-transform: uppercase; color: #888; display: block;">Total Vendido</span>
+                    <strong id="vendedor-total-vendido" style="font-size: 18px; color: var(--text-dark);">R$ 0,00</strong>
+                </div>
+                <div style="border-left: 1px solid var(--border-gray); padding-left: 24px;">
+                    <span style="font-size: 11px; text-transform: uppercase; color: #888; display: block;">Comissão Gerada</span>
+                    <strong id="vendedor-total-comissao" style="font-size: 18px; color: var(--accent-gold);">R$ 0,00</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Abas de Navegação do Vendedor -->
+        <div style="display: flex; gap: 12px; border-bottom: 1px solid var(--border-gray); padding-bottom: 16px; margin-bottom: 28px; flex-wrap: wrap;">
+            <button type="button" id="tab-vend-catalogo" class="cat-btn active" onclick="alternarAbaVendedor('catalogo')">
+                Catálogo Completo & Especificações
+            </button>
+            <button type="button" id="tab-vend-pedidos" class="cat-btn" onclick="alternarAbaVendedor('pedidos')">
+                Cadastrar / Ver Pedidos (<span id="qtd-minhas-vendas">0</span>)
+            </button>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- ABA 1: CATÁLOGO COMPLETO (SOMENTE CONSULTA)                -->
+        <!-- ========================================================== -->
+        <section id="sec-vend-catalogo">
+            <div style="margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
+                <input type="text" id="filtro-catalogo-vendedor" oninput="renderCatalogoVendedor()" placeholder="Filtrar produto por nome, coleção, cor ou categoria..." style="flex: 1; min-width: 260px; padding: 12px 16px; border: 1px solid var(--border-gray); font-family: inherit; font-size: 14px;">
+            </div>
+
+            <div id="lista-catalogo-vendedor" style="display: flex; flex-direction: column; gap: 14px;"></div>
+        </section>
+
+        <!-- ========================================================== -->
+        <!-- ABA 2: CADASTRAR & VER PEDIDOS DO VENDEDOR                 -->
+        <!-- ========================================================== -->
+        <section id="sec-vend-pedidos" style="display: none;">
+            <div class="checkout-grid">
+                
+                <!-- Formulário de Lançamento de Pedido pelo Vendedor -->
+                <form class="checkout-step-box" onsubmit="salvarPedidoVendedor(event)">
+                    <span class="subtitle">NOVA VENDA</span>
+                    <h2>Cadastrar Pedido</h2>
+                    <p style="font-size: 12px; color: #777; margin-bottom: 18px;">Preencha os dados do cliente, modalidade de entrega/retirada e itens do pedido.</p>
+
+                    <!-- Dados Bloqueados do Vendedor -->
+                    <div class="form-row-2" style="margin-bottom: 14px; background: var(--bg-soft); padding: 12px; border: 1px solid var(--border-gray);">
+                        <div class="form-group">
+                            <label style="font-size: 11px; color: #666;">Vendedor Responsável (Fixo)</label>
+                            <input type="text" id="vend-ped-responsavel" readonly style="background: #efefef; color: #555; cursor: not-allowed; font-weight: 600;">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 11px; color: #666;">Taxa de Comissão (Definida pelo ADM)</label>
+                            <input type="text" id="vend-ped-taxa-fixa" readonly style="background: #efefef; color: var(--accent-gold); cursor: not-allowed; font-weight: 600;">
+                        </div>
+                    </div>
+
+                    <!-- Dados do Cliente -->
+                    <div class="form-row-2" style="margin-bottom: 14px;">
+                        <div class="form-group">
+                            <label>Nome do Cliente *</label>
+                            <input type="text" id="vend-ped-cliente" placeholder="Ex: Mariana Costa" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone / WhatsApp *</label>
+                            <input type="tel" id="vend-ped-telefone" placeholder="(21) 99999-9999" required>
+                        </div>
+                    </div>
+
+                    <!-- Modalidade de Entrega ou Retirada na Loja -->
+                    <div style="background: var(--bg-soft); padding: 14px; border: 1px solid var(--border-gray); margin-bottom: 14px;">
+                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 8px;">Modalidade de Recebimento *</label>
+                        
+                        <div class="form-row-2" style="margin-bottom: 10px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; background: var(--bg-main); padding: 10px; border: 1px solid var(--border-gray);">
+                                <input type="radio" name="vend_tipo_entrega" value="retirada" checked onchange="alternarLogisticaVendedor()">
+                                <span>Retirada na Loja</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; background: var(--bg-main); padding: 10px; border: 1px solid var(--border-gray);">
+                                <input type="radio" name="vend_tipo_entrega" value="entrega" onchange="alternarLogisticaVendedor()">
+                                <span>Enviar para Endereço</span>
+                            </label>
+                        </div>
+
+                        <!-- Campo quando for Retirada na Loja -->
+                        <div id="vend-box-retirada" class="form-group">
+                            <label style="font-size: 11px;">Dia previsto para retirada na loja *</label>
+                            <input type="date" id="vend-ped-data-retirada" required style="background: var(--bg-main);">
+                        </div>
+
+                        <!-- Campo quando for Entrega no Endereço (Base para integração Correios/Transportadora) -->
+                        <div id="vend-box-endereco" class="form-group" style="display: none;">
+                            <label style="font-size: 11px;">Endereço Completo de Entrega (Rua, Nº, Bairro, Cidade/UF, CEP) *</label>
+                            <input type="text" id="vend-ped-endereco" placeholder="Ex: Rua Coronel Moreira César, 120, Icaraí, Niterói - RJ, CEP 24230-060" style="background: var(--bg-main);">
+                            <span style="font-size: 11px; color: #888; margin-top: 4px;">* Cotação automática de Correios/Transportadora será vinculada a este endereço.</span>
+                        </div>
+                    </div>
+
+                    <!-- Seleção do Produto -->
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label>Produto *</label>
+                        <select id="vend-ped-produto" onchange="aoSelecionarProdutoVendedor()" style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit;" required>
+                            <option value="">-- Selecione um produto do catálogo --</option>
+                        </select>
+                    </div>
+
+                    <!-- Descrição Editável do Produto / Pedido -->
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label>Descrição / Detalhes do Pedido (Metragem, cor, observações) *</label>
+                        <textarea id="vend-ped-descricao" rows="2" style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit; font-size: 14px;" placeholder="Ex: Parede sala 3,5m x 2,6m" required></textarea>
+                    </div>
+
+                    <!-- Quantidade (Rolos/Barras/Placas) e Valor Total -->
+                    <div class="form-row-2" style="margin-bottom: 14px;">
+                        <div class="form-group">
+                            <label id="label-qtd-pecas">Quantidade (Rolos / Barras / Placas) *</label>
+                            <input type="number" id="vend-ped-qtd" min="1" value="1" oninput="recalcularPedidoVendedor(true)" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Valor Total do Pedido (R$) *</label>
+                            <input type="number" id="vend-ped-valor" step="0.01" placeholder="189.90" oninput="recalcularPedidoVendedor(false)" required>
+                        </div>
+                    </div>
+
+                    <!-- Forma de Pagamento -->
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label>Forma de Pagamento *</label>
+                        <select id="vend-ped-pagamento" style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit;">
+                            <option value="Pix">Pix</option>
+                            <option value="Cartão de Crédito">Cartão de Crédito</option>
+                            <option value="Cartão de Débito">Cartão de Débito</option>
+                            <option value="Dinheiro / Transferência">Dinheiro / Transferência</option>
+                            <option value="Boleto Bancário">Boleto Bancário</option>
+                        </select>
+                    </div>
+
+                    <!-- Prévia automática da Comissão -->
+                    <div id="vend-previa-comissao" style="background: var(--bg-soft); border: 1px solid var(--border-gray); padding: 14px; margin-bottom: 20px; font-size: 13px;">
+                        Sua comissão neste pedido: <strong style="color: var(--accent-gold);">R$ 0,00</strong>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 16px;">Registrar Pedido</button>
+                    <button type="button" class="btn-outline" style="width: 100%; margin-top: 10px; border-color: var(--accent-gold); color: var(--text-dark);" onclick="gerarPropostaVendedor()">Gerar Orçamento em PDF para o Cliente</button>
+                </form>
+
+                <!-- Coluna Direita: Histórico de Pedidos do Vendedor -->
+                <aside class="checkout-summary-box">
+                    <h3>Meus Pedidos Registrados (<span id="qtd-lista-vendas">0</span>)</h3>
+                    <p style="font-size: 12px; color: #777; margin-bottom: 16px;">Pedidos lançados por você e vendas vinculadas ao seu cadastro.</p>
+                    <div id="lista-vendas-vendedor" style="display: flex; flex-direction: column; gap: 12px; max-height: 750px; overflow-y: auto;"></div>
+                </aside>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Trava de Segurança: apenas 'vendedor' (ou 'admin' inspecionando) acessa esta página
+        const vendedorLogado = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
+        if (!vendedorLogado || (vendedorLogado.perfil !== 'vendedor' && vendedorLogado.perfil !== 'admin')) {
+            window.location.href = 'login.html';
+        }
+
+        const taxaComissaoFixa = Number(vendedorLogado?.comissao) || 0;
+
+        function alternarAbaVendedor(aba) {
+            const isCat = aba === 'catalogo';
+            document.getElementById('sec-vend-catalogo').style.display = isCat ? 'block' : 'none';
+            document.getElementById('sec-vend-pedidos').style.display = isCat ? 'none' : 'block';
+
+            document.getElementById('tab-vend-catalogo').classList.toggle('active', isCat);
+            document.getElementById('tab-vend-pedidos').classList.toggle('active', !isCat);
+
+            if (!isCat) {
+                popularProdutosSelectVendedor();
+                carregarDadosVendedor();
+            }
+        }
+
+        function alternarLogisticaVendedor() {
+            const tipo = document.querySelector('input[name="vend_tipo_entrega"]:checked').value;
+            const boxRet = document.getElementById('vend-box-retirada');
+            const boxEnd = document.getElementById('vend-box-endereco');
+            const inputData = document.getElementById('vend-ped-data-retirada');
+            const inputEnd = document.getElementById('vend-ped-endereco');
+
+            if (tipo === 'retirada') {
+                boxRet.style.display = 'block';
+                boxEnd.style.display = 'none';
+                inputData.required = true;
+                inputEnd.required = false;
+            } else {
+                boxRet.style.display = 'none';
+                boxEnd.style.display = 'block';
+                inputData.required = false;
+                inputEnd.required = true;
+            }
+        }
+
+        function popularProdutosSelectVendedor() {
+            const select = document.getElementById('vend-ped-produto');
+            if (!select) return;
+            const catalogo = getCatalogo();
+
+            select.innerHTML = `<option value="">-- Selecione um produto do catálogo --</option>` + catalogo.map(p => {
+                const saldo = Number(p.estoque ?? 0);
+                const tipoLabel = p.tipoVenda === 'rolo' ? 'rolos' : (p.tipoVenda === 'barra' ? 'barras' : (p.tipoVenda === 'placa' ? 'placas' : 'un.'));
+                return `<option value="${p.id}" data-preco="${p.preco}" data-nome="${p.nome}" data-tipo="${p.tipoVenda}" data-estoque="${saldo}" ${saldo === 0 ? 'disabled' : ''}>
+                    ${p.nome} — R$ ${Number(p.preco).toFixed(2).replace('.', ',')} (${saldo === 0 ? 'ESGOTADO' : saldo + ' ' + tipoLabel + ' disponíveis'})
+                </option>`;
+            }).join('');
+        }
+
+        function aoSelecionarProdutoVendedor() {
+            const select = document.getElementById('vend-ped-produto');
+            const option = select.options[select.selectedIndex];
+            if (!option || !option.value) return;
+
+            const nomeProd = option.dataset.nome || '';
+            const tipoVenda = option.dataset.tipo || 'unidade';
+            const labelQtd = document.getElementById('label-qtd-pecas');
+
+            const labelsPorTipo = {
+                rolo: 'Quantidade de Rolos *',
+                barra: 'Quantidade de Barras *',
+                placa: 'Quantidade de Placas *',
+                m2: 'Quantidade (m²) *',
+                unidade: 'Quantidade (Unidades) *'
+            };
+            labelQtd.innerText = labelsPorTipo[tipoVenda] || 'Quantidade (Rolos / Barras / Placas) *';
+
+            const descInput = document.getElementById('vend-ped-descricao');
+            if (!descInput.value.trim()) {
+                descInput.value = nomeProd;
+            }
+
+            recalcularPedidoVendedor(true);
+        }
+
+        function recalcularPedidoVendedor(atualizarValorPeloProduto) {
+            const select = document.getElementById('vend-ped-produto');
+            const option = select.options[select.selectedIndex];
+            const precoUnit = parseFloat(option?.dataset?.preco) || 0;
+            const qtd = parseInt(document.getElementById('vend-ped-qtd').value) || 1;
+            const valorInput = document.getElementById('vend-ped-valor');
+
+            if (atualizarValorPeloProduto && precoUnit > 0) {
+                valorInput.value = (precoUnit * qtd).toFixed(2);
+            }
+
+            const valorTotal = parseFloat(valorInput.value) || 0;
+            const comissaoGerada = (valorTotal * taxaComissaoFixa) / 100;
+
+            document.getElementById('vend-previa-comissao').innerHTML = `
+                Sua comissão neste pedido (${taxaComissaoFixa}%): <strong style="color: var(--accent-gold);">R$ ${comissaoGerada.toFixed(2).replace('.', ',')}</strong>
+            `;
+        }
+
+        function gerarPropostaVendedor() {
+            const selectProd = document.getElementById('vend-ped-produto');
+            const prodId = selectProd.value;
+            const prod = getCatalogo().find(p => p.id === prodId);
+
+            if (!prod) {
+                alert('Selecione um produto do catálogo antes de gerar o orçamento em PDF.');
+                selectProd.focus();
+                return;
+            }
+
+            const clienteNome = document.getElementById('vend-ped-cliente').value.trim();
+            const clienteTelefone = document.getElementById('vend-ped-telefone').value.trim();
+            const descricaoEditada = document.getElementById('vend-ped-descricao').value.trim();
+            const qtd = Math.max(1, parseInt(document.getElementById('vend-ped-qtd').value) || 1);
+            const valorTotal = parseFloat(document.getElementById('vend-ped-valor').value) || (prod.preco * qtd);
+
+            const tipoVenda = prod.tipoVenda || 'unidade';
+            const unidadeTexto = tipoVenda === 'rolo' ? (qtd === 1 ? 'rolo' : 'rolos')
+                : (tipoVenda === 'barra' ? (qtd === 1 ? 'barra' : 'barras')
+                : (tipoVenda === 'placa' ? (qtd === 1 ? 'placa' : 'placas') : (qtd === 1 ? 'unidade' : 'unidades')));
+
+            localStorage.setItem('acsaOrcamentoAtual', JSON.stringify({
+                consultor: vendedorLogado ? vendedorLogado.nome : 'Consultor Acsa',
+                clienteNome: clienteNome,
+                clienteContato: clienteTelefone,
+                itens: [{
+                    nome: prod.nome,
+                    descricao: descricaoEditada || `${prod.categoria} • ${prod.subcategoria}`,
+                    detalhe: `${qtd} ${unidadeTexto}`,
+                    qtdPecas: qtd,
+                    precoUnitario: valorTotal / qtd,
+                    preco: valorTotal
+                }]
+            }));
+
+            window.location.href = 'orcamento.html';
+        }
+
+        function salvarPedidoVendedor(event) {
+            event.preventDefault();
+            if (!vendedorLogado) return;
+
+            const selectProd = document.getElementById('vend-ped-produto');
+            const optionProd = selectProd.options[selectProd.selectedIndex];
+            const produtoId = selectProd.value;
+            const nomeProduto = optionProd?.dataset?.nome || "Produto";
+            const tipoVenda = optionProd?.dataset?.tipo || "unidade";
+            const estoqueAtual = parseInt(optionProd?.dataset?.estoque) || 0;
+            const qtd = parseInt(document.getElementById('vend-ped-qtd').value) || 1;
+
+            if (produtoId && qtd > estoqueAtual) {
+                alert(`Quantidade solicitada (${qtd}) ultrapassa o estoque disponível (${estoqueAtual}).`);
+                return;
+            }
+
+            const tipoEntrega = document.querySelector('input[name="vend_tipo_entrega"]:checked').value;
+            let infoLogistica = '';
+            if (tipoEntrega === 'retirada') {
+                const dataRaw = document.getElementById('vend-ped-data-retirada').value;
+                const dataFormatada = dataRaw ? dataRaw.split('-').reverse().join('/') : 'A combinar';
+                infoLogistica = `Retirada na Loja (Dia: ${dataFormatada})`;
+            } else {
+                const enderecoCliente = document.getElementById('vend-ped-endereco').value.trim();
+                infoLogistica = `Envio p/ Endereço: ${enderecoCliente}`;
+            }
+
+            const valorTotal = parseFloat(document.getElementById('vend-ped-valor').value) || 0;
+            const valorComissao = (valorTotal * taxaComissaoFixa) / 100;
+            const descricaoEditada = document.getElementById('vend-ped-descricao').value.trim();
+
+            const unidadeTexto = tipoVenda === 'rolo' ? (qtd === 1 ? 'rolo' : 'rolos')
+                : (tipoVenda === 'barra' ? (qtd === 1 ? 'barra' : 'barras')
+                : (tipoVenda === 'placa' ? (qtd === 1 ? 'placa' : 'placas') : 'un.'));
+
+            const novoPedido = {
+                id: 'VEND-' + Math.floor(1000 + Math.random() * 9000),
+                data: new Date().toLocaleDateString('pt-BR'),
+                cliente: document.getElementById('vend-ped-cliente').value.trim(),
+                telefone: document.getElementById('vend-ped-telefone').value.trim(),
+                itemResumo: `${qtd} ${unidadeTexto} de ${nomeProduto} • ${infoLogistica} — Obs: ${descricaoEditada}`,
+                valorTotal: valorTotal,
+                pagamento: document.getElementById('vend-ped-pagamento').value,
+                vendedorEmail: vendedorLogado.email,
+                vendedorNome: vendedorLogado.nome,
+                percComissao: taxaComissaoFixa,
+                valorComissao: valorComissao
+            };
+
+            if (typeof salvarPedidoSistema === 'function') {
+                salvarPedidoSistema(novoPedido);
+            }
+
+            if (produtoId && typeof darBaixaEstoque === 'function') {
+                darBaixaEstoque(produtoId, qtd);
+            }
+
+            alert(`Pedido ${novoPedido.id} registrado com sucesso!\nComissão gerada: R$ ${valorComissao.toFixed(2).replace('.', ',')}`);
+            
+            event.target.reset();
+            alternarLogisticaVendedor();
+            preencherCamposFixosVendedor();
+            popularProdutosSelectVendedor();
+            recalcularPedidoVendedor(false);
+            carregarDadosVendedor();
+            renderCatalogoVendedor();
+        }
+
+        function preencherCamposFixosVendedor() {
+            if (!vendedorLogado) return;
+            const campoResp = document.getElementById('vend-ped-responsavel');
+            const campoTaxa = document.getElementById('vend-ped-taxa-fixa');
+            if (campoResp) campoResp.value = vendedorLogado.nome;
+            if (campoTaxa) campoTaxa.value = `${taxaComissaoFixa}% (Fixo)`;
+        }
+
+        function carregarDadosVendedor() {
+            if (!vendedorLogado) return;
+
+            document.getElementById('vendedor-header-nome').innerText = vendedorLogado.nome;
+            document.getElementById('vendedor-titulo').innerText = `Olá, ${vendedorLogado.nome}`;
+            document.getElementById('vendedor-info-doc').innerText = `E-mail: ${vendedorLogado.email}${vendedorLogado.cpf ? ' • CPF: ' + vendedorLogado.cpf : ''}`;
+            document.getElementById('vendedor-taxa-comissao').innerText = `${taxaComissaoFixa}%`;
+
+            preencherCamposFixosVendedor();
+
+            const todosPedidos = typeof getPedidosRegistrados === 'function' ? getPedidosRegistrados() : [];
+            const minhasVendas = todosPedidos.filter(p => p.vendedorEmail && p.vendedorEmail.toLowerCase() === vendedorLogado.email.toLowerCase());
+
+            const totalVendido = minhasVendas.reduce((acc, p) => acc + Number(p.valorTotal), 0);
+            const totalComissao = minhasVendas.reduce((acc, p) => acc + Number(p.valorComissao), 0);
+
+            document.getElementById('vendedor-total-vendido').innerText = 'R$ ' + totalVendido.toFixed(2).replace('.', ',');
+            document.getElementById('vendedor-total-comissao').innerText = 'R$ ' + totalComissao.toFixed(2).replace('.', ',');
+            document.getElementById('qtd-minhas-vendas').innerText = minhasVendas.length;
+            
+            const qtdListaEl = document.getElementById('qtd-lista-vendas');
+            if (qtdListaEl) qtdListaEl.innerText = minhasVendas.length;
+
+            const listaVendasEl = document.getElementById('lista-vendas-vendedor');
+            if (minhasVendas.length === 0) {
+                listaVendasEl.innerHTML = '<p style="color: #888; font-size: 13px; padding: 16px 0;">Nenhum pedido registrado no seu nome até o momento.</p>';
+            } else {
+                listaVendasEl.innerHTML = minhasVendas.map(p => `
+                    <div style="background: var(--bg-main); padding: 14px; border: 1px solid var(--border-gray); font-size: 12px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <strong>${p.id} &bull; ${p.cliente} ${p.telefone ? '(' + p.telefone + ')' : ''}</strong>
+                            <span style="color: #888;">${p.data}</span>
+                        </div>
+                        <p style="color: #555; margin-bottom: 8px;">${p.itemResumo}</p>
+                        <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--border-gray);">
+                            <span>Venda: <strong>R$ ${Number(p.valorTotal).toFixed(2).replace('.', ',')}</strong> (${p.pagamento})</span>
+                            <span style="color: var(--accent-gold); font-weight: 600;">Comissão (${p.percComissao}%): R$ ${Number(p.valorComissao).toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function renderCatalogoVendedor() {
+            const termo = (document.getElementById('filtro-catalogo-vendedor').value || '').toLowerCase().trim();
+            const catalogo = getCatalogo();
+
+            const filtrados = catalogo.filter(p => {
+                if (!termo) return true;
+                const specsTexto = p.fichaTecnica ? Object.values(p.fichaTecnica).join(' ').toLowerCase() : '';
+                return (
+                    p.nome.toLowerCase().includes(termo) ||
+                    p.categoria.toLowerCase().includes(termo) ||
+                    p.subcategoria.toLowerCase().includes(termo) ||
+                    (p.descricao && p.descricao.toLowerCase().includes(termo)) ||
+                    specsTexto.includes(termo)
+                );
+            });
+
+            const container = document.getElementById('lista-catalogo-vendedor');
+            if (filtrados.length === 0) {
+                container.innerHTML = '<p style="color: #888; font-size: 14px; padding: 24px 0;">Nenhum produto encontrado com esse termo.</p>';
+                return;
+            }
+
+            container.innerHTML = filtrados.map(p => {
+                const thumb = p.imagemPrincipal || (p.imagens && p.imagens[0]) || '';
+                const saldo = Number(p.estoque ?? 0);
+                const corSaldo = saldo === 0 ? '#b54b4b' : (saldo <= 5 ? '#c47f17' : '#2e7d32');
+                const sufixo = p.tipoVenda === 'rolo' ? ' / rolo' : (p.tipoVenda === 'barra' ? ' / barra' : (p.tipoVenda === 'placa' ? ' / placa' : (p.tipoVenda === 'm2' ? ' / m²' : '')));
+                const specsHTML = p.fichaTecnica 
+                    ? Object.entries(p.fichaTecnica).map(([k, v]) => `<span style="display:inline-block; margin-right: 16px; margin-top: 4px; font-size: 12px; color: #555;"><strong>${k}:</strong> ${v}</span>`).join('')
+                    : '';
+
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; background: var(--bg-main); padding: 16px; border: 1px solid var(--border-gray); gap: 16px;">
+                        <div style="display: flex; align-items: flex-start; gap: 16px;">
+                            ${thumb ? `<img src="${thumb}" style="width: 76px; height: 76px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border-gray);">` : ''}
+                            <div>
+                                <span style="font-size: 11px; text-transform: uppercase; color: var(--accent-gold); font-weight: 600;">${p.linha.toUpperCase()} &bull; ${p.categoria} &bull; ${p.subcategoria}</span>
+                                <strong style="font-size: 15px; display: block; margin: 3px 0;">${p.nome}</strong>
+                                <span style="font-size: 14px; font-weight: 600; display: block; margin-bottom: 6px;">
+                                    R$ ${Number(p.preco).toFixed(2).replace('.', ',')}${sufixo}
+                                    <span style="margin-left: 12px; font-size: 12px; color: ${corSaldo};">● Estoque: ${saldo} un.</span>
+                                </span>
+                                <p style="font-size: 13px; color: #666; margin-bottom: 6px;">${p.descricao || ''}</p>
+                                <div>${specsHTML}</div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-outline" style="padding: 8px 14px; font-size: 12px; flex-shrink: 0;" onclick="abrirProdutoPorId('${p.id}')">Simular Medidas</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarDadosVendedor();
+            renderCatalogoVendedor();
+            popularProdutosSelectVendedor();
+        });
+    </script>
+</body>
+</html>

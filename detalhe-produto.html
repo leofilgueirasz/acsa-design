@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produto | Acsa Design</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <span>FRETE GRÁTIS PARA COMPRAS ACIMA DE R$ 299 • 5% OFF NO PIX</span>
+    </div>
+
+    <div id="search-overlay" class="search-overlay">
+        <form class="search-container" onsubmit="executeSearch(event)">
+            <input type="text" id="global-search-input" placeholder="O que você procura? Ex: Papel de Parede, Xadrez, Biarritz..." required>
+            <button type="submit" class="btn-primary" style="border:none; cursor:pointer; padding: 10px 24px;">Buscar</button>
+            <button type="button" class="close-search" onclick="toggleSearch()">&times;</button>
+        </form>
+    </div>
+
+    <header class="header">
+        <div class="container header-content">
+            <nav class="nav-links">
+                <a href="index.html">Início</a>
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="marca.html">A Marca</a>
+            </nav>
+
+            <a href="index.html" class="brand-logo">
+                <img src="logo-acsa.png" alt="Acsa Design">
+            </a>
+
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleSearch()">Buscar</button>
+                <a href="login.html" class="icon-btn" style="text-decoration: none;">Entrar</a>
+                <button class="icon-btn" onclick="toggleCart()">Sacola (<span id="cart-count">0</span>)</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container product-page">
+        <div class="product-detail-layout">
+            
+            <!-- Galeria: 3 Miniaturas na Esquerda + Foto Grande na Direita -->
+            <div class="gallery-wrapper">
+                <div class="vertical-thumbnails" id="thumbs-container"></div>
+                <div class="large-photo-box" id="foto-principal" style="overflow: hidden;"></div>
+            </div>
+
+            <!-- Coluna Direita: Informações, Valor, Calculadora de Rolos e Ficha Técnica -->
+            <div class="product-buy-col">
+                <span class="subtitle" id="item-categoria">ACSA DESIGN</span>
+                <h1 id="item-nome">Carregando...</h1>
+                <p class="product-sku" id="item-desc-curta" style="margin-top: 8px; font-size: 13px; color: #666;"></p>
+
+                <!-- Indicador de Estoque -->
+                <div id="estoque-status-badge" style="margin-top: 10px; font-size: 12px; font-weight: 600;"></div>
+
+                <!-- Bloco de Valores -->
+                <div class="price-display-box">
+                    <div class="price-main-row">
+                        <span class="big-price" id="item-valor">R$ 0,00</span>
+                        <span class="discount-tag" id="item-discount-tag">17% OFF</span>
+                    </div>
+                    <span class="old-price" id="item-valor-antigo">De: R$ 0,00</span>
+                    <span class="unit-note" id="item-unidade">ou até 6x sem juros no cartão</span>
+                </div>
+
+                <!-- Calculadora de Metragem / Rolos -->
+                <div class="measurement-box" id="bloco-metragem">
+                    <div class="measurement-header">
+                        <label>Calcule a quantidade para sua parede:</label>
+                        <span class="measure-hint" id="tipo-calculo-label">Cobertura: 4,3 m² / rolo</span>
+                    </div>
+
+                    <div class="measurement-inputs">
+                        <div class="measure-field">
+                            <label for="largura">Largura da parede (m)</label>
+                            <input type="number" id="largura" value="2.00" min="0.50" step="0.10" oninput="recalcularMetragem()">
+                        </div>
+                        <span class="measure-x">x</span>
+                        <div class="measure-field">
+                            <label for="altura">Altura da parede (m)</label>
+                            <input type="number" id="altura" value="2.10" min="0.50" step="0.10" oninput="recalcularMetragem()">
+                        </div>
+                    </div>
+
+                    <div class="measurement-summary" id="resumo-medida-texto">
+                        Área: <strong>4,20 m²</strong> &bull; Necessário: <strong>1 rolo</strong>
+                    </div>
+                </div>
+
+                <!-- Seletor de Quantidade (Para produtos vendidos por unidade, ex: Boiserie) -->
+                <div class="measurement-box" id="bloco-unidade-simples" style="display: none;">
+                    <div class="measurement-header">
+                        <label for="qtd-unidade-input">Quantidade desejada:</label>
+                        <span class="measure-hint">Venda por unidade</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
+                        <input type="number" id="qtd-unidade-input" value="1" min="1" step="1" oninput="recalcularUnidadeSimples()" style="width: 100px; padding: 10px; border: 1px solid var(--border-gray); font-family: inherit; font-size: 14px;">
+                        <span id="resumo-unidade-texto" style="font-size: 13px; color: #666;">1 unidade selecionada</span>
+                    </div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="action-buttons-stack">
+                    <button type="button" id="btn-comprar-agora" class="btn-primary btn-buy-direct" onclick="comprarAgora()">Comprar Agora</button>
+                    <button type="button" id="btn-adicionar-sacola" class="btn-outline btn-add-cart" onclick="adicionarSacola()">Adicionar ao Carrinho</button>
+                <button type="button" class="btn-outline" style="width: 100%; font-size: 11px; border-color: var(--accent-gold); color: var(--text-dark);" onclick="gerarOrcamentoProduto()">Gerar Orçamento em PDF (Esta Medida)</button>
+                </div>
+
+                <!-- Cálculo de Frete Multi-Transportadoras ou Retirada na Loja -->
+                <div class="shipping-box">
+                    <label for="cep-input">Calcule o Frete ou Retirada (Origem: São Gonçalo/RJ):</label>
+                    <div class="shipping-form">
+                        <input type="text" id="cep-input" placeholder="Digite seu CEP (00000-000)" maxlength="9">
+                        <button type="button" class="btn-outline" onclick="calcularOpcoesEntrega()">Calcular</button>
+                    </div>
+
+                    <div id="shipping-results" class="shipping-results" style="display: none;"></div>
+                </div>
+
+                <!-- Ficha Técnica Detalhada -->
+                <div class="specs-table-box" id="ficha-tecnica-container">
+                    <h3 style="font-size: 18px; margin-bottom: 12px;">Especificações Técnicas</h3>
+                    <table class="specs-table" id="ficha-tecnica-tabela"></table>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo">ACSA <span>DESIGN</span></div>
+                <p>Home • Baby</p>
+            </div>
+            <div class="footer-links">
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="marca.html">A Marca</a>
+                <a href="login.html">Minha Conta</a>
+            </div>
+            <div class="footer-copy">
+                <p>&copy; 2026 Acsa Design. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Gaveta da Sacola -->
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Sua Sacola</h3>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        <div id="cart-items" class="cart-items">
+            <p class="empty-cart-msg">Sua sacola está vazia.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal">R$ 0,00</span>
+            </div>
+            <a href="checkout.html" class="btn-primary" style="width: 100%; text-align: center; display: block;">Finalizar Compra</a>
+        </div>
+    </div>
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Busca sempre a versão mais atualizada do produto no catálogo (para refletir o estoque real)
+        const selecaoInicial = JSON.parse(localStorage.getItem('produtoSelecionado')) || getCatalogo()[0];
+        const produtoSalvo = getCatalogo().find(p => p.id === selecaoInicial.id) || selecaoInicial;
+
+        let valorUnitario = Number(produtoSalvo.preco);
+        let valorAntigoUnitario = Number(produtoSalvo.precoAntigo) || valorUnitario;
+        let valorFinalAtual = valorUnitario;
+        let qtdPecasAtual = 1;
+        let detalheCarrinho = "1 unidade";
+        const estoqueDisponivel = Number(produtoSalvo.estoque ?? 0);
+
+        document.title = produtoSalvo.nome + " | Acsa Design";
+        document.getElementById('item-nome').innerText = produtoSalvo.nome;
+        document.getElementById('item-categoria').innerText = `${produtoSalvo.categoria.toUpperCase()} • ${produtoSalvo.subcategoria.toUpperCase()}`;
+        document.getElementById('item-desc-curta').innerText = produtoSalvo.descricao || "";
+
+        // Calcula porcentagem real de desconto se houver preço antigo maior
+        const discountTagEl = document.getElementById('item-discount-tag');
+        if (valorAntigoUnitario > valorUnitario) {
+            const percOff = Math.round(((valorAntigoUnitario - valorUnitario) / valorAntigoUnitario) * 100);
+            discountTagEl.innerText = `${percOff}% OFF`;
+        } else {
+            discountTagEl.style.display = 'none';
+            document.getElementById('item-valor-antigo').style.display = 'none';
+        }
+
+        // Exibe status do estoque e bloqueia se estiver esgotado
+        const badgeEstoque = document.getElementById('estoque-status-badge');
+        const btnComprar = document.getElementById('btn-comprar-agora');
+        const btnAddSacola = document.getElementById('btn-adicionar-sacola');
+
+        if (estoqueDisponivel <= 0) {
+            badgeEstoque.innerHTML = `<span style="color: #b54b4b;">● PRODUTO ESGOTADO NO MOMENTO</span>`;
+            btnComprar.disabled = true;
+            btnComprar.innerText = "Produto Esgotado";
+            btnComprar.style.opacity = "0.5";
+            btnComprar.style.cursor = "not-allowed";
+            btnAddSacola.style.display = "none";
+        } else if (estoqueDisponivel <= 5) {
+            badgeEstoque.innerHTML = `<span style="color: #c47f17;">● Últimas ${estoqueDisponivel} unidades em estoque</span>`;
+        } else {
+            badgeEstoque.innerHTML = `<span style="color: #2e7d32;">● Em estoque (${estoqueDisponivel} disponíveis)</span>`;
+        }
+
+        // Monta as 3 miniaturas e a foto principal
+        const thumbsContainer = document.getElementById('thumbs-container');
+        const fotoPrincipalEl = document.getElementById('foto-principal');
+
+        if (produtoSalvo.imagens && produtoSalvo.imagens.length > 0) {
+            fotoPrincipalEl.innerHTML = `<img src="${produtoSalvo.imagens[0]}" alt="${produtoSalvo.nome}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            thumbsContainer.innerHTML = produtoSalvo.imagens.map((imgSrc, idx) => `
+                <div class="v-thumb ${idx === 0 ? 'active' : ''}" onclick="trocarImagemReal(this, '${imgSrc}')" style="overflow: hidden; padding: 0;">
+                    <img src="${imgSrc}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+            `).join('');
+        } else {
+            fotoPrincipalEl.innerHTML = `<span>[ Foto ${produtoSalvo.categoria} ]</span>`;
+            thumbsContainer.innerHTML = `
+                <div class="v-thumb active"><span>[ Foto 1 ]</span></div>
+                <div class="v-thumb"><span>[ Foto 2 ]</span></div>
+                <div class="v-thumb"><span>[ Foto 3 ]</span></div>
+            `;
+        }
+
+        function trocarImagemReal(el, src) {
+            document.querySelectorAll('.v-thumb').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            fotoPrincipalEl.innerHTML = `<img src="${src}" style="width: 100%; height: 100%; object-fit: cover;">`;
+        }
+
+        // Preenche a Ficha Técnica
+        const tabelaSpecs = document.getElementById('ficha-tecnica-tabela');
+        if (produtoSalvo.fichaTecnica && Object.keys(produtoSalvo.fichaTecnica).length > 0) {
+            tabelaSpecs.innerHTML = Object.entries(produtoSalvo.fichaTecnica).map(([chave, valor]) => `
+                <tr>
+                    <td style="font-weight: 600; padding: 8px 0; border-bottom: 1px solid #eee; width: 40%; font-size: 13px;">${chave}</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #eee; font-size: 13px; font-weight: 300;">${valor}</td>
+                </tr>
+            `).join('');
+        } else {
+            document.getElementById('ficha-tecnica-container').style.display = 'none';
+        }
+
+        if (produtoSalvo.tipoVenda === 'unidade') {
+            document.getElementById('bloco-metragem').style.display = 'none';
+            document.getElementById('bloco-unidade-simples').style.display = 'block';
+            recalcularUnidadeSimples();
+        } else {
+            recalcularMetragem();
+        }
+
+        function recalcularUnidadeSimples() {
+            const qtdInput = document.getElementById('qtd-unidade-input');
+            qtdPecasAtual = Math.max(1, parseInt(qtdInput.value) || 1);
+            valorFinalAtual = qtdPecasAtual * valorUnitario;
+            const antigoTotal = qtdPecasAtual * valorAntigoUnitario;
+
+            detalheCarrinho = `${qtdPecasAtual} ${qtdPecasAtual === 1 ? 'unidade' : 'unidades'}`;
+            document.getElementById('resumo-unidade-texto').innerText = `${detalheCarrinho} selecionada${qtdPecasAtual > 1 ? 's' : ''}`;
+            document.getElementById('item-valor').innerText = 'R$ ' + valorFinalAtual.toFixed(2).replace('.', ',');
+            document.getElementById('item-valor-antigo').innerText = 'De: R$ ' + antigoTotal.toFixed(2).replace('.', ',');
+        }
+
+        function recalcularMetragem() {
+            const l = parseFloat(document.getElementById('largura').value) || 0;
+            const a = parseFloat(document.getElementById('altura').value) || 0;
+            const area = Math.max(0.1, l * a);
+
+            const tiposPorPeca = {
+                rolo: { sing: 'rolo', plur: 'rolos' },
+                barra: { sing: 'barra', plur: 'barras' },
+                placa: { sing: 'placa', plur: 'placas' }
+            };
+
+            if (tiposPorPeca[produtoSalvo.tipoVenda]) {
+                const label = tiposPorPeca[produtoSalvo.tipoVenda];
+                const cobertura = produtoSalvo.coberturaRolo || 4.3;
+                qtdPecasAtual = Math.max(1, Math.ceil(area / cobertura));
+                valorFinalAtual = qtdPecasAtual * valorUnitario;
+                const antigoTotal = qtdPecasAtual * valorAntigoUnitario;
+
+                const nomeUnidade = qtdPecasAtual === 1 ? label.sing : label.plur;
+                detalheCarrinho = `${qtdPecasAtual} ${nomeUnidade} (área de ${area.toFixed(2).replace('.', ',')} m²)`;
+                
+                document.getElementById('tipo-calculo-label').innerText = `Rendimento: ${cobertura.toFixed(2).replace('.', ',')} m² / ${label.sing}`;
+                document.getElementById('resumo-medida-texto').innerHTML = `Área informada: <strong>${area.toFixed(2).replace('.', ',')} m²</strong> &bull; Você precisa de: <strong>${qtdPecasAtual} ${nomeUnidade}</strong>`;
+                document.getElementById('item-valor').innerText = 'R$ ' + valorFinalAtual.toFixed(2).replace('.', ',');
+                document.getElementById('item-valor-antigo').innerText = 'De: R$ ' + antigoTotal.toFixed(2).replace('.', ',');
+            } else {
+                qtdPecasAtual = Math.ceil(area);
+                valorFinalAtual = area * valorUnitario;
+                const antigoTotal = area * valorAntigoUnitario;
+                detalheCarrinho = `${area.toFixed(2).replace('.', ',')} m²`;
+                document.getElementById('resumo-medida-texto').innerHTML = `Área total: <strong>${detalheCarrinho}</strong>`;
+                document.getElementById('item-valor').innerText = 'R$ ' + valorFinalAtual.toFixed(2).replace('.', ',');
+                document.getElementById('item-valor-antigo').innerText = 'De: R$ ' + antigoTotal.toFixed(2).replace('.', ',');
+            }
+        }
+
+        function validarEstoqueAntesDeAdicionar() {
+            if (estoqueDisponivel <= 0) {
+                alert('Desculpe, este produto está esgotado no momento.');
+                return false;
+            }
+            if (qtdPecasAtual > estoqueDisponivel) {
+                alert(`Quantidade solicitada (${qtdPecasAtual}) ultrapassa nosso estoque disponível (${estoqueDisponivel} unidades).`);
+                return false;
+            }
+            return true;
+        }
+
+        function adicionarItemComEstoqueNaSacola() {
+            const cart = getCart();
+            cart.push({
+                id: Date.now(),
+                produtoId: produtoSalvo.id,
+                nome: produtoSalvo.nome,
+                detalhe: detalheCarrinho,
+                qtdPecas: qtdPecasAtual,
+                preco: valorFinalAtual
+            });
+            saveCart(cart);
+        }
+
+        function adicionarSacola() {
+            if (!validarEstoqueAntesDeAdicionar()) return;
+            adicionarItemComEstoqueNaSacola();
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-overlay');
+            if (drawer && !drawer.classList.contains('open')) {
+                drawer.classList.add('open');
+                if (overlay) overlay.classList.add('open');
+            }
+        }
+
+        function comprarAgora() {
+            if (!validarEstoqueAntesDeAdicionar()) return;
+            adicionarItemComEstoqueNaSacola();
+            window.location.href = 'checkout.html';
+        }
+        function gerarOrcamentoProduto() {
+            const payloadOrcamento = {
+                itens: [{
+                    nome: produtoSalvo.nome,
+                    descricao: `${produtoSalvo.categoria} • ${produtoSalvo.subcategoria}`,
+                    detalhe: detalheCarrinho,
+                    qtdPecas: qtdPecasAtual,
+                    precoUnitario: valorUnitario,
+                    preco: valorFinalAtual
+                }]
+            };
+            localStorage.setItem('acsaOrcamentoAtual', JSON.stringify(payloadOrcamento));
+            window.location.href = 'orcamento.html';
+        }
+
+        async function calcularOpcoesEntrega() {
+            const cep = document.getElementById('cep-input').value;
+            const resultsBox = document.getElementById('shipping-results');
+            resultsBox.style.display = 'block';
+            resultsBox.innerHTML = `<div class="shipping-option"><span>Consultando transportadoras para seu CEP...</span></div>`;
+
+            try {
+                const itens = [{ id: produtoSalvo.id, quantidade: qtdPecasAtual, preco: valorFinalAtual }];
+                const opcoes = await cotarFreteMultiTransportadoras(cep, itens, valorFinalAtual);
+
+                const htmlRetirada = `
+                    <div class="shipping-option">
+                        <span><strong>Retirada na Loja / Showroom</strong> (São Gonçalo / Niterói - RJ)</span>
+                        <span style="color: var(--accent-gold); font-weight: 600;">GRÁTIS</span>
+                    </div>
+                `;
+
+                const htmlTransportadoras = opcoes.map(op => {
+                    const precoTexto = op.preco === 0
+                        ? '<strong style="color: var(--accent-gold);">GRÁTIS</strong>'
+                        : `R$ ${op.preco.toFixed(2).replace('.', ',')}`;
+                    return `
+                        <div class="shipping-option">
+                            <span><strong>${op.transportadora} (${op.servico})</strong> - até ${op.prazoDias} dias úteis</span>
+                            <span>${precoTexto}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                resultsBox.innerHTML = htmlRetirada + htmlTransportadoras;
+            } catch (err) {
+                resultsBox.innerHTML = `<div class="shipping-option"><span style="color: #b54b4b;">${err.message}</span></div>`;
+            }
+        }
+    </script>
+</body>
+</html>

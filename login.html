@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Conta | Acsa Design</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <span>ÁREA EXCLUSIVA PARA CLIENTES E PARCEIROS • ACSA DESIGN</span>
+    </div>
+
+    <header class="header">
+        <div class="container header-content">
+            <nav class="nav-links">
+                <a href="index.html">Início</a>
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="marca.html">A Marca</a>
+            </nav>
+            <a href="index.html" class="brand-logo">
+                <img src="logo-acsa.png" alt="Acsa Design">
+            </a>
+            <div class="header-actions">
+                <a href="index.html" class="icon-btn" style="text-decoration: none;">Voltar à Loja</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 64px 24px; max-width: 480px;">
+        <div class="checkout-step-box">
+            
+            <!-- Abas Entrar / Criar Conta -->
+            <div style="display: flex; border-bottom: 1px solid var(--border-gray); margin-bottom: 24px;">
+                <button type="button" id="tab-login" onclick="alternarAbaAuth('login')" style="flex: 1; padding: 12px; background: none; border: none; border-bottom: 2px solid var(--accent-gold); font-weight: 600; cursor: pointer;">Entrar</button>
+                <button type="button" id="tab-cadastro" onclick="alternarAbaAuth('cadastro')" style="flex: 1; padding: 12px; background: none; border: none; border-bottom: 2px solid transparent; color: #888; cursor: pointer;">Criar Conta</button>
+            </div>
+
+            <!-- Formulário Único de Acesso -->
+            <form id="form-login" onsubmit="processarLogin(event)">
+                <span class="subtitle">ACESSO À CONTA</span>
+                <h2>Bem-vindo(a)</h2>
+
+                <div class="form-group" style="margin-bottom: 14px;">
+                    <label>E-mail</label>
+                    <input type="email" id="login-email" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Senha</label>
+                    <input type="password" id="login-senha" placeholder="••••••" required>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 14px;">Entrar</button>
+            </form>
+
+            <!-- Formulário de Cadastro (Apenas Cliente ou Parceiro) -->
+            <form id="form-cadastro" style="display: none;" onsubmit="processarCadastro(event)">
+                <span class="subtitle">NOVO CADASTRO</span>
+                <h2>Criar Conta</h2>
+
+                <div class="form-group" style="margin-bottom: 14px;">
+                    <label>Nome Completo ou Escritório</label>
+                    <input type="text" id="cad-nome" placeholder="Ex: Ana Costa Arquitetura" required>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 14px;">
+                    <label>Tipo de Conta</label>
+                    <select id="cad-perfil" style="padding: 12px; border: 1px solid var(--border-gray); font-family: inherit;">
+                        <option value="cliente">Cliente</option>
+                        <option value="parceiro">Arquiteto / Designer Parceiro</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 14px;">
+                    <label>E-mail</label>
+                    <input type="email" id="cad-email" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Criar Senha</label>
+                    <input type="password" id="cad-senha" placeholder="Mínimo 4 caracteres" required>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 14px;">Cadastrar</button>
+            </form>
+
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script>
+        function alternarAbaAuth(aba) {
+            const isLogin = aba === 'login';
+            document.getElementById('form-login').style.display = isLogin ? 'block' : 'none';
+            document.getElementById('form-cadastro').style.display = isLogin ? 'none' : 'block';
+            
+            document.getElementById('tab-login').style.borderBottomColor = isLogin ? 'var(--accent-gold)' : 'transparent';
+            document.getElementById('tab-login').style.color = isLogin ? 'var(--text-dark)' : '#888';
+            
+            document.getElementById('tab-cadastro').style.borderBottomColor = !isLogin ? 'var(--accent-gold)' : 'transparent';
+            document.getElementById('tab-cadastro').style.color = !isLogin ? 'var(--text-dark)' : '#888';
+        }
+
+        function redirecionarPorPerfil(user) {
+            if (user.perfil === 'admin') {
+                window.location.href = 'admin.html';
+            } else if (user.perfil === 'vendedor') {
+                window.location.href = 'vendedor.html';
+            } else {
+                window.location.href = 'minha-conta.html';
+            }
+        }
+    
+
+        function processarLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const senha = document.getElementById('login-senha').value;
+            const user = fazerLoginSistema(email, senha);
+            
+            if (!user) {
+                alert('E-mail ou senha incorretos.');
+                return;
+            }
+            redirecionarPorPerfil(user);
+        }
+
+        function processarCadastro(e) {
+            e.preventDefault();
+            const nome = document.getElementById('cad-nome').value;
+            const perfil = document.getElementById('cad-perfil').value;
+            const email = document.getElementById('cad-email').value;
+            const senha = document.getElementById('cad-senha').value;
+            
+            const user = cadastrarNovoCliente(nome, email, senha, perfil);
+            redirecionarPorPerfil(user);
+        }
+    </script>
+</body>
+</html>

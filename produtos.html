@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Produto | Acsa Design</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <span>FRETE GRÁTIS PARA COMPRAS ACIMA DE R$ 299 • 5% OFF NO PIX</span>
+    </div>
+
+    <div id="search-overlay" class="search-overlay">
+        <form class="search-container" onsubmit="executeSearch(event)">
+            <input type="text" id="global-search-input" placeholder="O que você procura? Ex: Cortina, Papel de Parede, Manta..." required>
+            <button type="submit" class="btn-primary" style="border:none; cursor:pointer; padding: 10px 24px;">Buscar</button>
+            <button type="button" class="close-search" onclick="toggleSearch()">&times;</button>
+        </form>
+    </div>
+
+    <header class="header">
+        <div class="container header-content">
+            <nav class="nav-links">
+                <a href="index.html">Início</a>
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="marca.html">A Marca</a>
+            </nav>
+
+            <a href="index.html" class="brand-logo">
+                <img src="logo-acsa.png" alt="Acsa Design">
+            </a>
+
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleSearch()">Buscar</button>
+                <a href="login.html" class="icon-btn" style="text-decoration: none;">Entrar</a>
+                <button class="icon-btn" onclick="toggleCart()">Sacola (<span id="cart-count">0</span>)</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container product-page">
+        <div class="product-detail-layout">
+            
+            <!-- Coluna Esquerda: 3 Miniaturas ao lado da Foto Maior -->
+            <div class="gallery-wrapper">
+                <div class="vertical-thumbnails">
+                    <div class="v-thumb active" id="thumb-0" onclick="selectThumb(0)"></div>
+                    <div class="v-thumb" id="thumb-1" onclick="selectThumb(1)"></div>
+                    <div class="v-thumb" id="thumb-2" onclick="selectThumb(2)"></div>
+                </div>
+
+                <div class="large-photo-box" id="main-product-display"></div>
+            </div>
+
+            <!-- Coluna Direita: Preço, Desconto, Metragem e Botões -->
+            <div class="product-buy-col">
+                <span class="subtitle" id="prod-category">ACSA DESIGN</span>
+                <h1 id="prod-title">Carregando produto...</h1>
+                <p class="product-sku" id="prod-sku">Cód: ---</p>
+
+                <!-- Bloco de Preços (Atual em Destaque + Antigo Riscado) -->
+                <div class="price-display-box">
+                    <div class="price-main-row">
+                        <span class="big-price" id="display-total-price">R$ 0,00</span>
+                        <span class="discount-tag" id="prod-discount">OFF</span>
+                    </div>
+                    <span class="old-price" id="display-old-price">De: R$ 0,00</span>
+                    <span class="unit-note" id="prod-unit">---</span>
+                </div>
+
+                <!-- Campo de Metragem (Aparece apenas para Cortinas, Papéis de Parede, Pisos, etc.) -->
+                <div class="measurement-box" id="measurement-section" style="display: none;">
+                    <div class="measurement-header">
+                        <label>Informe a metragem desejada:</label>
+                        <span class="measure-hint">Venda por m²</span>
+                    </div>
+
+                    <div class="measurement-inputs">
+                        <div class="measure-field">
+                            <label for="input-largura">Largura (metros)</label>
+                            <input type="number" id="input-largura" value="1.00" min="0.50" step="0.10" oninput="calculateMeasurePrice()">
+                        </div>
+                        <span class="measure-x">x</span>
+                        <div class="measure-field">
+                            <label for="input-altura">Altura / Comprimento (m)</label>
+                            <input type="number" id="input-altura" value="1.00" min="0.50" step="0.10" oninput="calculateMeasurePrice()">
+                        </div>
+                    </div>
+
+                    <div class="measurement-summary">
+                        <span>Área total calculada: <strong id="total-area">1,00 m²</strong></span>
+                    </div>
+                </div>
+
+                <!-- Botões de Ação: Comprar e Adicionar ao Carrinho -->
+                <div class="action-buttons-stack">
+                    <button type="button" class="btn-primary btn-buy-direct" onclick="buyNow()">Comprar</button>
+                    <button type="button" class="btn-outline btn-add-cart" onclick="addProductToCart()">Adicionar ao Carrinho</button>
+                </div>
+
+                <!-- Calculadora de Frete -->
+                <div class="shipping-box">
+                    <label for="cep-input">Simular Frete e Prazo de Entrega:</label>
+                    <div class="shipping-form">
+                        <input type="text" id="cep-input" placeholder="00000-000" maxlength="9">
+                        <button type="button" class="btn-outline" onclick="calculateShipping()">Calcular</button>
+                    </div>
+                    <div id="shipping-results" class="shipping-results" style="display: none;">
+                        <div class="shipping-option">
+                            <span><strong>Transportadora Padrão</strong> - até 5 dias úteis</span>
+                            <span>R$ 24,90</span>
+                        </div>
+                        <div class="shipping-option">
+                            <span><strong>Entrega Expressa</strong> - até 2 dias úteis</span>
+                            <span>R$ 42,00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descrição -->
+                <div class="product-specs">
+                    <h3>Detalhes da Peça</h3>
+                    <p id="prod-description" style="font-size: 13px; font-weight: 300; margin-top: 8px;"></p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo">ACSA <span>DESIGN</span></div>
+                <p>Home • Baby</p>
+            </div>
+            <div class="footer-links">
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="marca.html">A Marca</a>
+                <a href="login.html">Minha Conta</a>
+            </div>
+            <div class="footer-copy">
+                <p>&copy; 2026 Acsa Design. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Gaveta da Sacola -->
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Sua Sacola</h3>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        <div id="cart-items" class="cart-items">
+            <p class="empty-cart-msg">Sua sacola está vazia.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal">R$ 0,00</span>
+            </div>
+            <button class="btn-primary" style="width: 100%; border: none; cursor: pointer;" onclick="alert('Seguindo para o pagamento!')">Finalizar Compra</button>
+        </div>
+    </div>
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+
+    <script src="js/produtos-db.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Identificar qual produto foi clicado na URL (ex: produto.html?id=cortina-linho)
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id') || 'cortina-linho';
+        const produtoAtual = catalogoProdutos[productId] || catalogoProdutos['cortina-linho'];
+
+        let currentCalculatedPrice = produtoAtual.precoAtual;
+        let currentMeasureNote = "1 unidade";
+        let cartItemsCount = 0;
+        let cartSubtotalValue = 0;
+
+        // Preencher a página com os dados do produto selecionado
+        document.title = produtoAtual.nome + " | Acsa Design";
+        document.getElementById('prod-category').innerText = produtoAtual.categoria;
+        document.getElementById('prod-title').innerText = produtoAtual.nome;
+        document.getElementById('prod-sku').innerText = "Cód: " + produtoAtual.sku;
+        document.getElementById('prod-discount').innerText = produtoAtual.desconto;
+        document.getElementById('prod-unit').innerText = produtoAtual.unidade;
+        document.getElementById('prod-description').innerText = produtoAtual.descricao;
+
+        document.getElementById('display-total-price').innerText = 'R$ ' + produtoAtual.precoAtual.toFixed(2).replace('.', ',');
+        document.getElementById('display-old-price').innerText = 'De: R$ ' + produtoAtual.precoAntigo.toFixed(2).replace('.', ',');
+
+        // Preencher as 3 miniaturas e a foto grande inicial
+        produtoAtual.fotos.forEach((foto, index) => {
+            document.getElementById(`thumb-${index}`).innerHTML = `<span>${foto}</span>`;
+        });
+        document.getElementById('main-product-display').innerHTML = `<span>${produtoAtual.fotos[0]}</span>`;
+
+        // Exibir o campo de metragem apenas se o produto exigir (Cortinas, Papéis de Parede, Pisos)
+        if (produtoAtual.precisaMetragem) {
+            document.getElementById('measurement-section').style.display = 'block';
+            currentMeasureNote = "1,00 m²";
+        }
+
+        function selectThumb(index) {
+            document.querySelectorAll('.v-thumb').forEach(t => t.classList.remove('active'));
+            document.getElementById(`thumb-${index}`).classList.add('active');
+            document.getElementById('main-product-display').innerHTML = `<span>${produtoAtual.fotos[index]}</span>`;
+        }
+
+        function calculateMeasurePrice() {
+            if (!produtoAtual.precisaMetragem) return;
+            const largura = parseFloat(document.getElementById('input-largura').value) || 0;
+            const altura = parseFloat(document.getElementById('input-altura').value) || 0;
+            const area = Math.max(0.1, largura * altura);
+
+            currentCalculatedPrice = area * produtoAtual.precoAtual;
+            const oldTotal = area * produtoAtual.precoAntigo;
+            currentMeasureNote = area.toFixed(2).replace('.', ',') + ' m²';
+
+            document.getElementById('total-area').innerText = currentMeasureNote;
+            document.getElementById('display-total-price').innerText = 'R$ ' + currentCalculatedPrice.toFixed(2).replace('.', ',');
+            document.getElementById('display-old-price').innerText = 'De: R$ ' + oldTotal.toFixed(2).replace('.', ',');
+        }
+
+        function addProductToCart() {
+            cartItemsCount++;
+            cartSubtotalValue += currentCalculatedPrice;
+            
+            document.getElementById('cart-count').innerText = cartItemsCount;
+            document.getElementById('cart-subtotal').innerText = 'R$ ' + cartSubtotalValue.toFixed(2).replace('.', ',');
+
+            const cartList = document.getElementById('cart-items');
+            if (cartItemsCount === 1) cartList.innerHTML = '';
+
+            cartList.innerHTML += `
+                <div class="cart-item-row" style="margin-bottom: 12px;">
+                    <div>
+                        <strong>${produtoAtual.nome}</strong>
+                        <p style="font-size: 12px; color: #777;">${currentMeasureNote}</p>
+                    </div>
+                    <span>R$ ${currentCalculatedPrice.toFixed(2).replace('.', ',')}</span>
+                </div>
+            `;
+            toggleCart();
+        }
+
+        function buyNow() {
+            addProductToCart();
+            alert('Indo para o pagamento: ' + produtoAtual.nome + ' (' + currentMeasureNote + ')');
+        }
+
+        function calculateShipping() {
+            const cep = document.getElementById('cep-input').value;
+            if (cep.length < 8) {
+                alert('Digite um CEP válido.');
+                return;
+            }
+            document.getElementById('shipping-results').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
