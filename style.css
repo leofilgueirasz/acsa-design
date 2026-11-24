@@ -1729,3 +1729,247 @@ h1, h2, h3, .logo {
         grid-template-columns: 1fr;
     }
 }
+/* ==========================================
+   OTIMIZAÇÃO MOBILE COMPLETA (TELAS ATÉ 900PX)
+========================================== */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: 1px solid var(--border-gray);
+    color: var(--text-dark);
+    font-size: 20px;
+    width: 38px;
+    height: 38px;
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    .top-bar {
+        font-size: 10px;
+        letter-spacing: 0.8px;
+        padding: 7px 10px;
+    }
+
+    /* Cabeçalho Mobile com Menu Hambúrguer */
+    .header-content {
+        height: 68px;
+        gap: 8px;
+    }
+
+    .mobile-menu-btn {
+        display: inline-flex;
+        order: 1;
+    }
+
+    .brand-logo {
+        order: 2;
+    }
+
+    .brand-logo img {
+        width: 105px !important;
+        max-height: 54px !important;
+    }
+
+    .header-actions {
+        order: 3;
+        gap: 10px;
+    }
+
+    .header-actions .icon-btn {
+        font-size: 12px;
+        padding: 4px;
+    }
+
+    /* Menu Deslizante Mobile */
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 68px;
+        left: 0;
+        width: 100%;
+        background-color: var(--bg-main);
+        border-bottom: 1px solid var(--border-gray);
+        flex-direction: column;
+        gap: 0;
+        padding: 8px 0;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+        z-index: 150;
+    }
+
+    .nav-links.mobile-open {
+        display: flex;
+    }
+
+    .nav-links a {
+        padding: 14px 24px;
+        border-bottom: 1px solid var(--bg-soft);
+        font-size: 14px;
+    }
+
+    /* Carrossel Principal (Hero) no Celular */
+    .hero-carousel {
+        height: 430px;
+        margin-top: 8px;
+    }
+
+    .hero-slide-content {
+        padding: 0 20px;
+    }
+
+    .hero-slide-content h1,
+    .hero-slide-content h2 {
+        font-size: 26px;
+        line-height: 1.2;
+    }
+
+    .hero-slide-content p {
+        font-size: 13px;
+        margin-bottom: 18px;
+    }
+
+    .hero-slide-actions .btn-primary,
+    .hero-btn-light {
+        padding: 11px 18px;
+        font-size: 11px;
+    }
+
+    .carousel-arrow {
+        display: none; /* No celular o cliente desliza ou usa as barras inferiores */
+    }
+
+    /* Vitrine e Universos */
+    .universes {
+        padding: 40px 16px;
+        gap: 20px;
+    }
+
+    .universe-img {
+        height: 240px;
+    }
+
+    .universe-info {
+        padding: 20px;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .product-img {
+        height: 190px;
+    }
+
+    .product-details {
+        padding: 12px 10px;
+        gap: 6px;
+    }
+
+    .product-details h3 {
+        font-size: 14px;
+        line-height: 1.3;
+    }
+
+    .price {
+        font-size: 13px;
+    }
+
+    /* Gaveta da Sacola 100% responsiva */
+    .cart-drawer {
+        width: 100%;
+        max-width: 100vw;
+        right: -100%;
+    }
+
+    /* Página de Produto no Celular */
+    .product-page {
+        padding-top: 24px !important;
+        padding-bottom: 56px !important;
+    }
+
+    .product-detail-layout {
+        gap: 28px;
+    }
+
+    .large-photo-box {
+        height: 320px;
+    }
+
+    .v-thumb {
+        height: 72px;
+    }
+
+    .big-price {
+        font-size: 28px;
+    }
+
+    .measurement-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .measurement-inputs {
+        gap: 8px;
+    }
+
+    /* Carrossel de Produtos Relacionados */
+    .related-header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .related-carousel-track .product-card {
+        min-width: 215px;
+        max-width: 215px;
+    }
+
+    /* Checkout, Login e Painéis */
+    .checkout-page,
+    .auth-container,
+    .catalog-page {
+        padding: 32px 16px;
+    }
+
+    .checkout-step-box,
+    .checkout-summary-box,
+    .auth-box,
+    .reviews-summary-card {
+        padding: 20px 16px;
+    }
+
+    .checkout-summary-box {
+        position: static;
+    }
+
+    .category-bar {
+        gap: 8px;
+    }
+
+    .cat-btn {
+        padding: 8px 14px;
+        font-size: 12px;
+    }
+
+    .footer {
+        padding: 36px 0 84px 0; /* Respiro extra para não cobrir pelo botão do WhatsApp */
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 14px;
+    }
+}

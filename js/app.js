@@ -1017,3 +1017,48 @@ function inicializarBotaoWhatsApp() {
 }
 
 document.addEventListener('DOMContentLoaded', inicializarBotaoWhatsApp);
+
+// ==========================================
+// 10. MENU MOBILE AUTOMÁTICO (TODAS AS PÁGINAS)
+// ==========================================
+function inicializarMenuMobile() {
+    const headerContent = document.querySelector('.header-content');
+    const navLinks = headerContent ? headerContent.querySelector('.nav-links') : null;
+    if (!headerContent || !navLinks) return;
+    if (document.getElementById('acsa-mobile-menu-btn')) return;
+
+    const btn = document.createElement('button');
+    btn.id = 'acsa-mobile-menu-btn';
+    btn.type = 'button';
+    btn.className = 'mobile-menu-btn';
+    btn.setAttribute('aria-label', 'Abrir menu de navegação');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.innerHTML = '&#9776;';
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const aberto = navLinks.classList.toggle('mobile-open');
+        btn.innerHTML = aberto ? '&times;' : '&#9776;';
+        btn.setAttribute('aria-expanded', String(aberto));
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('mobile-open');
+            btn.innerHTML = '&#9776;';
+            btn.setAttribute('aria-expanded', 'false');
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!headerContent.contains(e.target) && navLinks.classList.contains('mobile-open')) {
+            navLinks.classList.remove('mobile-open');
+            btn.innerHTML = '&#9776;';
+            btn.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    headerContent.insertBefore(btn, navLinks);
+}
+
+document.addEventListener('DOMContentLoaded', inicializarMenuMobile);
