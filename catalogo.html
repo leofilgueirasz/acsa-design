@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Completo — ACSA DESIGN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .catalogo-page-wrap {
+            max-width: 1380px;
+            margin: 36px auto 80px;
+            padding: 0 24px;
+        }
+        .catalogo-top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 20px;
+            padding-bottom: 20px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-gray, #CFCFCF);
+            flex-wrap: wrap;
+        }
+        .catalogo-top-header h1 {
+            margin: 4px 0 0;
+            font-size: 32px;
+        }
+        .catalogo-total-box {
+            text-align: right;
+            background: #F9F9F9;
+            border: 1px solid var(--border-gray, #CFCFCF);
+            padding: 12px 20px;
+            min-width: 190px;
+        }
+        .catalogo-total-label {
+            display: block;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #777;
+        }
+        .catalogo-total-numero {
+            display: block;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1816;
+            margin-top: 2px;
+        }
+        .catalogo-filtros-linha {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 26px;
+        }
+        .catalogo-grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 18px;
+        }
+        @media (max-width: 1200px) {
+            .catalogo-grid-5 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+        @media (max-width: 768px) {
+            .catalogo-grid-5 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .catalogo-total-box {
+                width: 100%;
+                text-align: left;
+            }
+        }
+        @media (max-width: 480px) {
+            .catalogo-grid-5 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-content">
+            <a href="index.html" class="brand-logo">ACSA DESIGN</a>
+            <nav class="nav-links">
+                <a href="index.html">Início</a>
+                <a href="catalogo.html" class="active">Catálogo</a>
+                <a href="favoritos.html">Favoritos</a>
+                <a href="login.html">Entrar</a>
+            </nav>
+            <div class="header-actions">
+                <button type="button" class="icon-btn" onclick="toggleSearch()" aria-label="Buscar">&#128269;</button>
+                <button type="button" class="icon-btn cart-btn" onclick="toggleCart()" aria-label="Sacola">
+                    &#128717; <span id="cart-count">0</span>
+                </button>
+            </div>
+        </div>
+        <div id="search-overlay" class="search-overlay">
+            <form onsubmit="executeSearch(event)" class="search-form">
+                <input type="text" id="global-search-input" placeholder="Buscar revestimento, piso, painel ripado...">
+                <button type="submit" class="btn-primary">Buscar</button>
+            </form>
+        </div>
+    </header>
+
+    <main class="catalogo-page-wrap">
+        <div class="catalogo-top-header">
+            <div>
+                <span class="subtitle">VITRINE COMPLETA • ACSA DESIGN</span>
+                <h1>Catálogo de Produtos</h1>
+            </div>
+            <div class="catalogo-total-box">
+                <span class="catalogo-total-label">Total de Produtos</span>
+                <span id="catalogo-total-count" class="catalogo-total-numero">0</span>
+            </div>
+        </div>
+
+        <div id="catalogo-filtros" class="catalogo-filtros-linha">
+            <button type="button" class="filter-btn active" data-filtro="todos" onclick="filtrarPaginaCatalogo('todos')">Todos</button>
+            <button type="button" class="filter-btn" data-filtro="home" onclick="filtrarPaginaCatalogo('home')">Acsa Home</button>
+            <button type="button" class="filter-btn" data-filtro="baby" onclick="filtrarPaginaCatalogo('baby')">Acsa Baby</button>
+            <button type="button" class="filter-btn" data-filtro="Papel de Parede" onclick="filtrarPaginaCatalogo('Papel de Parede')">Papel de Parede</button>
+            <button type="button" class="filter-btn" data-filtro="Piso Vinílico" onclick="filtrarPaginaCatalogo('Piso Vinílico')">Piso Vinílico</button>
+            <button type="button" class="filter-btn" data-filtro="Painel Ripado" onclick="filtrarPaginaCatalogo('Painel Ripado')">Painel Ripado</button>
+            <button type="button" class="filter-btn" data-filtro="Jardim Artificial" onclick="filtrarPaginaCatalogo('Jardim Artificial')">Jardim Artificial</button>
+            <button type="button" class="filter-btn" data-filtro="Molduras & Boiserie" onclick="filtrarPaginaCatalogo('Molduras & Boiserie')">Molduras &amp; Boiserie</button>
+        </div>
+
+        <div id="pagina-catalogo-grid" class="catalogo-grid-5"></div>
+    </main>
+
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+    <aside id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Sua Sacola</h3>
+            <button type="button" onclick="toggleCart()" aria-label="Fechar sacola">&times;</button>
+        </div>
+        <div id="cart-items" class="cart-items"></div>
+        <div class="cart-footer">
+            <div class="cart-subtotal-row">
+                <span>Subtotal</span>
+                <strong id="cart-subtotal">R$ 0,00</strong>
+            </div>
+            <a href="checkout.html" class="btn-primary" style="width:100%; text-align:center; display:block;">Finalizar Pedido</a>
+        </div>
+    </aside>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

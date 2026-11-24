@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Listas de Favoritos | ACSA DESIGN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="top-bar">PARCEIROS CADASTRADOS TÊM CONDIÇÕES EXCLUSIVAS EM PROJETOS | ENVIAMOS PARA TODO O BRASIL</div>
+
+    <header class="header">
+        <div class="container header-content">
+            <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Abrir Menu">☰</button>
+
+            <nav class="nav-links" id="main-nav">
+                <a href="index.html">Início</a>
+                <a href="home.html">Acsa Home</a>
+                <a href="baby.html">Acsa Baby</a>
+                <a href="servicos.html">Instalações & Reformas</a>
+                <a href="favoritos.html" class="active">Minhas Listas</a>
+            </nav>
+
+            <a href="index.html" class="brand-logo">
+                <img src="img/logo-acsa.png" alt="ACSA DESIGN">
+            </a>
+
+            <div class="header-actions">
+                <button class="icon-btn" id="search-btn">Buscar</button>
+                <a href="login.html" class="icon-btn" id="header-account-link" style="text-decoration: none;">Entrar</a>
+                <button class="icon-btn" id="cart-btn">Sacola (<span id="cart-count">0</span>)</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-banner">
+        <span class="subtitle">CURADORIA PESSOAL</span>
+        <h1>Minhas Listas de Favoritos</h1>
+        <p>Salve e organize revestimentos, papéis de parede e acabamentos para cada ambiente do seu projeto.</p>
+    </section>
+
+    <main class="container favorites-page" id="favorites-page-root"></main>
+
+    <div class="cart-overlay" id="cart-overlay"></div>
+    <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+            <h3>Sua Sacola</h3>
+            <button class="close-cart" id="close-cart">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items-container"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Subtotal</span>
+                <span id="cart-subtotal">R$ 0,00</span>
+            </div>
+            <a href="checkout.html" class="btn-primary" style="width: 100%; text-align: center;">Finalizar Pedido</a>
+        </div>
+    </aside>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo-img"><img src="img/logo-acsa.png" alt="ACSA DESIGN"></div>
+                <p class="footer-tagline">BABY . DESIGN . HOME</p>
+            </div>
+            <div class="footer-copy">
+                <p>&copy; 2026 ACSA DESIGN. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

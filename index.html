@@ -30,6 +30,7 @@
                 <a href="home.html">Acsa Home</a>
                 <a href="baby.html">Acsa Baby</a>
                 <a href="marca.html">A Marca</a>
+                <a href="favoritos.html">Minhas Listas</a>
             </nav>
 
             <a href="index.html" class="brand-logo">
@@ -44,7 +45,7 @@
         </div>
     </header>
 
-    <!-- CARROSSEL ROTATIVO SHOWROOM & COLEÇÕES (ESTILO NIKE / CENTAURO) -->
+    <!-- CARROSSEL ROTATIVO SHOWROOM & COLEÇÕES -->
     <section class="hero-carousel" id="hero-carousel" onmouseenter="pausarCarrossel()" onmouseleave="iniciarCarrossel()">
         <div class="hero-slides-track" id="hero-slides-track">
             
@@ -110,17 +111,224 @@
         </div>
     </section>
 
-    <!-- Vitrine de Destaques (Carrega automaticamente com as fotos reais) -->
-    <section id="destaques" class="products-section container">
-        <div class="section-header">
-            <h2>Curadoria em Destaque</h2>
+    <!-- Catálogo Completo & Curadoria em Destaque -->
+    <section id="destaques" class="products-section container" style="padding-top: 84px; padding-bottom: 92px;">
+        <div class="section-header" style="margin-bottom: 52px;">
+            <span class="subtitle">CATÁLOGO OFICIAL</span>
+            <h2>Curadoria & Coleções</h2>
             <p>Clique em qualquer peça para ver detalhes, fotos e medidas</p>
         </div>
 
         <div id="vitrine-destaques-grid" class="product-grid"></div>
     </section>
 
-<!-- Faixa de Diferenciais & Atendimento Acsa Design -->
+    <!-- ========================================================== -->
+    <!-- SEÇÃO: OFERTAS RELÂMPAGO COM CRONÔMETRO ROTATIVO REAL      -->
+    <!-- ========================================================== -->
+    <section class="flash-deals-section">
+        <div class="container">
+            <div class="flash-deals-header">
+                <div class="flash-title-wrap">
+                    <span class="flash-eyebrow">CONDIÇÃO ESPECIAL</span>
+                    <h2>Aproveite, é por tempo limitado!</h2>
+                </div>
+                <div class="flash-countdown-box" aria-label="Tempo restante da oferta">
+                    <div class="time-unit">
+                        <strong id="flash-hours">08</strong>
+                        <span>Horas</span>
+                    </div>
+                    <span class="time-sep">:</span>
+                    <div class="time-unit">
+                        <strong id="flash-minutes">00</strong>
+                        <span>Minutos</span>
+                    </div>
+                    <span class="time-sep">:</span>
+                    <div class="time-unit">
+                        <strong id="flash-seconds">00</strong>
+                        <span>Segundos</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="flash-deals-grid" class="flash-deals-grid">
+                <!-- Preenchido e rotacionado automaticamente a cada ciclo de 8h -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- SEÇÃO: CATEGORIAS EM PROMOÇÃO (GRADE 2 COLUNAS)            -->
+    <!-- ========================================================== -->
+    <section class="promo-categories-section">
+        <div class="container">
+            <div class="section-header" style="margin-bottom: 44px;">
+                <span class="subtitle">NAVEGUE POR AMBIENTE & REVESTIMENTO</span>
+                <h2>Categorias em Destaque</h2>
+            </div>
+
+            <div class="promo-cat-grid">
+                <!-- Card 1: Papel de Parede -->
+                <a href="home.html" class="promo-cat-card">
+                    <div class="promo-cat-name">
+                        <h3>Papel de<br>Parede</h3>
+                        <span>Vinílicos & Texturas</span>
+                    </div>
+                    <div class="promo-cat-visual">
+                        <img src="img/papel-xadrez-marrom.webp" alt="Papel de Parede">
+                    </div>
+                    <div class="promo-cat-badge">
+                        <small>até</small>
+                        <strong>25%</strong>
+                        <span>de desconto</span>
+                    </div>
+                </a>
+
+                <!-- Card 2: Painel Ripado -->
+                <a href="home.html" class="promo-cat-card">
+                    <div class="promo-cat-name">
+                        <h3>Painel<br>Ripado WPC</h3>
+                        <span>Interno & Externo</span>
+                    </div>
+                    <div class="promo-cat-visual">
+                        <img src="img/ripado-interno-preto.webp" alt="Painel Ripado">
+                    </div>
+                    <div class="promo-cat-badge">
+                        <small>até</small>
+                        <strong>20%</strong>
+                        <span>de desconto</span>
+                    </div>
+                </a>
+
+                <!-- Card 3: Jardim Artificial -->
+                <a href="home.html" class="promo-cat-card">
+                    <div class="promo-cat-name">
+                        <h3>Jardim<br>Artificial</h3>
+                        <span>Placas 40×60cm</span>
+                    </div>
+                    <div class="promo-cat-visual">
+                        <img src="img/jardim-palma.webp" alt="Jardim Artificial">
+                    </div>
+                    <div class="promo-cat-badge">
+                        <small>até</small>
+                        <strong>30%</strong>
+                        <span>de desconto</span>
+                    </div>
+                </a>
+
+                <!-- Card 4: Piso Vinílico -->
+                <a href="home.html" class="promo-cat-card">
+                    <div class="promo-cat-name">
+                        <h3>Piso<br>Vinílico</h3>
+                        <span>Conforto Acústico</span>
+                    </div>
+                    <div class="promo-cat-visual">
+                        <img src="img/ripado-interno-cedro.webp" alt="Piso Vinílico">
+                    </div>
+                    <div class="promo-cat-badge">
+                        <small>até</small>
+                        <strong>15%</strong>
+                        <span>de desconto</span>
+                    </div>
+                </a>
+
+                <!-- Card 5: Cortinas & Têxteis -->
+                <a href="home.html" class="promo-cat-card">
+                    <div class="promo-cat-name">
+                        <h3>Cortinas &<br>Têxteis</h3>
+                        <span>Sob Medida & Linho</span>
+                    </div>
+                    <div class="promo-cat-visual">
+                        <img src="img/papel-floral-verde.webp" alt="Cortinas e Têxteis">
+                    </div>
+                    <div class="promo-cat-badge">
+                        <small>até</small>
+                        <strong>20%</strong>
+                        <span>de desconto</span>
+                    </div>
+                </a>
+
+                <!-- Card 6: Decoração & Pintura -->
+                <a href="baby.html" class="promo-cat-card">
+                    <div class="promo-cat-name">
+                        <h3>Decoração &<br>Pintura</h3>
+                        <span>Acabamentos & Baby</span>
+                    </div>
+                    <div class="promo-cat-visual">
+                        <img src="img/papel-cimento-queimado.webp" alt="Decoração e Pintura">
+                    </div>
+                    <div class="promo-cat-badge gold-alt">
+                        <small>a partir de</small>
+                        <strong>R$ 34,90</strong>
+                        <span>pronta entrega</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- SEÇÃO: ACSA DESIGN INSTALAÇÕES E REFORMAS (BANNER ÚNICO)   -->
+    <!-- ========================================================== -->
+    <section class="services-showcase-section">
+        <div class="container">
+            <div class="services-showcase-box">
+                
+                <!-- Esquerda: Banner Único Acsa Design Instalações e Reformas -->
+                <div class="services-single-banner">
+                    <img src="img/acsadesigninstalacao.jpg" alt="Acsa Design Instalações e Reformas">
+                </div>
+
+                <!-- Direita: Conteúdo Institucional & 4 Selos de Garantia -->
+                <div class="services-showcase-info">
+                    <span class="subtitle">MÃO DE OBRA ESPECIALIZADA</span>
+                    <h2>Acsa Design<br>Instalações e Reformas</h2>
+                    <p>Do projeto à execução final sem dor de cabeça. Nossa equipe técnica realiza a instalação limpa, nivelada e com acabamento impecável diretamente no seu ambiente.</p>
+
+                    <div class="services-pillars-grid">
+                        <div class="pillar-item">
+                            <span class="pillar-icon">&#9670;</span>
+                            <div>
+                                <strong>Tudo para sua casa em um só lugar</strong>
+                                <span>Venda de revestimentos + instalação técnica integrada.</span>
+                            </div>
+                        </div>
+
+                        <div class="pillar-item">
+                            <span class="pillar-icon">&#10003;</span>
+                            <div>
+                                <strong>Garantia de 1 ano Acsa Design</strong>
+                                <span>Cobertura total sobre a aplicação e fixação executadas.</span>
+                            </div>
+                        </div>
+
+                        <div class="pillar-item">
+                            <span class="pillar-icon">&#9733;</span>
+                            <div>
+                                <strong>Profissionais com avaliação média 5.0 ★</strong>
+                                <span>Instaladores treinados, pontuais e com proteção de piso.</span>
+                            </div>
+                        </div>
+
+                        <div class="pillar-item">
+                            <span class="pillar-icon">&#9707;</span>
+                            <div>
+                                <strong>Parcelamento exclusivo em até 6x</strong>
+                                <span>Facilidade no pagamento de materiais e serviços juntos.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap;">
+                        <a href="https://wa.me/5521976846510?text=Ol%C3%A1!%20Gostaria%20de%20solicitar%20um%20or%C3%A7amento%20de%20Acsa%20Design%20Instala%C3%A7%C3%B5es%20e%20Reformas." target="_blank" rel="noopener noreferrer" class="btn-primary">Solicitar Orçamento Técnico</a>
+                        <a href="home.html" class="btn-outline">Explorar Revestimentos</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Faixa de Diferenciais & Atendimento Acsa Design -->
     <section class="acsa-trust-strip">
         <div class="container acsa-trust-grid">
             <div class="acsa-trust-item">
@@ -142,35 +350,34 @@
         </div>
     </section>
 
-    <!-- Chamada Editorial Instagram @acsa.design -->
-    <section style="padding: 56px 24px; text-align: center;" class="container">
-        <span class="subtitle">INSPIRAÇÕES & PROJETOS REAIS</span>
-        <h2 style="font-size: 28px; margin-bottom: 10px;">Acompanhe @acsa.design</h2>
-        <p style="font-size: 14px; color: #666; font-weight: 300; max-width: 560px; margin: 0 auto 24px auto; line-height: 1.7;">
-            Veja ambientes instalados com nossos papéis de parede vinílicos, painéis ripados em WPC e novidades das coleções Acsa Home e Acsa Baby.
-        </p>
-        <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
-            <a href="https://instagram.com/acsa.design" target="_blank" rel="noopener noreferrer" class="btn-primary">Seguir no Instagram</a>
-            <a href="https://wa.me/5521976846510" target="_blank" rel="noopener noreferrer" class="btn-outline">Falar com Consultor</a>
-        </div>
-    </section>
-
-    <!-- Rodapé -->
+    <!-- Rodapé Compacto: Logo Oficial + Acompanhe @acsa.design + Copyright -->
     <footer class="footer">
         <div class="container footer-content">
+            
+            <!-- Esquerda: Logo Oficial + BABY • DESIGN • HOME -->
             <div class="footer-brand">
-                <div class="logo">ACSA <span>DESIGN</span></div>
-                <p>Home • Baby</p>
+                <a href="index.html" class="brand-logo footer-logo-img">
+                    <img src="logo-acsa.png" alt="Acsa Design">
+                </a>
+                <p class="footer-tagline">BABY • DESIGN • HOME</p>
             </div>
-            <div class="footer-links">
-                <a href="home.html">Acsa Home</a>
-                <a href="baby.html">Acsa Baby</a>
-                <a href="marca.html">A Marca</a>
-                <a href="login.html">Minha Conta</a>
+
+            <!-- Centro: Acompanhe @acsa.design (no lugar dos antigos links) -->
+            <div class="footer-social-center">
+                <span class="subtitle" style="margin-bottom: 4px;">INSPIRAÇÕES & PROJETOS REAIS</span>
+                <h3>Acompanhe @acsa.design</h3>
+                <p>Veja ambientes instalados com nossos papéis de parede vinílicos, painéis ripados em WPC e novidades das coleções Acsa Home e Acsa Baby.</p>
+                <div class="footer-social-actions">
+                    <a href="https://instagram.com/acsa.design" target="_blank" rel="noopener noreferrer" class="btn-primary">Seguir no Instagram</a>
+                    <a href="https://wa.me/5521976846510" target="_blank" rel="noopener noreferrer" class="btn-outline">Falar com Consultor</a>
+                </div>
             </div>
+
+            <!-- Direita: Copyright -->
             <div class="footer-copy">
                 <p>&copy; 2026 Acsa Design. Todos os direitos reservados.</p>
             </div>
+
         </div>
     </footer>
 
